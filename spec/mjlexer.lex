@@ -35,9 +35,17 @@ import java_cup.runtime.Symbol;
 "\f"   { }
 
 "program"   { return new_symbol(sym.PROG , yytext());}
+"else" 		{ return new_symbol(sym.ELSE, yytext()); }
+"if" 		{ return new_symbol(sym.IF, yytext()); }
+"break"     { return new_symbol(sym.BREAK, yytext()); }
+"continue"  { return new_symbol(sym.CONTINUE, yytext()); }
+"for"       { return new_symbol(sym.FOR, yytext()); }
 "print" 	{ return new_symbol(sym.PRINT, yytext()); }
+"read"	 	{ return new_symbol(sym.READ, yytext()); }
 "return" 	{ return new_symbol(sym.RETURN, yytext()); }
 "void" 		{ return new_symbol(sym.VOID, yytext()); }
+"switch" 	{ return new_symbol(sym.SWITCH, yytext()); }
+"case" 		{ return new_symbol(sym.CASE, yytext()); }
 "+" 		{ return new_symbol(sym.PLUS, yytext()); }
 "-" 		{ return new_symbol(sym.MINUS, yytext()); }
 "*" 		{ return new_symbol(sym.MUL, yytext()); }
@@ -58,6 +66,7 @@ import java_cup.runtime.Symbol;
 ":" 		{ return new_symbol(sym.COLON, yytext()); }
 "," 		{ return new_symbol(sym.COMMA, yytext()); }
 "\." 		{ return new_symbol(sym.DOT, yytext()); }
+"\?" 		{ return new_symbol(sym.QUESTION, yytext()); }
 "(" 		{ return new_symbol(sym.LPAREN, yytext()); }
 ")" 		{ return new_symbol(sym.RPAREN, yytext()); }
 "[" 		{ return new_symbol(sym.LBRACKET, yytext()); }
