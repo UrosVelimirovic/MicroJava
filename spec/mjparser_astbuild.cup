@@ -51,6 +51,6 @@ scan with {:
 terminal PROG;
 terminal Stirng IDENT;
 
-nonterminal Program;
+nonterminal Program Program;
 
-Program ::= (Program) PROG IDENT;
+Program ::= (Program) PROG IDENT:I1 {: RESULT=new Program(I1); RESULT.setLine(I1left); :};
