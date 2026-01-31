@@ -5,29 +5,16 @@
 
 package src.rs.ac.bg.etf.pp1.ast;
 
-public class VarDeclList implements SyntaxNode {
+public class VarDeclMore_comma extends VarDeclMore {
 
-    private SyntaxNode parent;
-    private int line;
-    private Type Type;
     private VarDecl VarDecl;
     private VarDeclMore VarDeclMore;
 
-    public VarDeclList (Type Type, VarDecl VarDecl, VarDeclMore VarDeclMore) {
-        this.Type=Type;
-        if(Type!=null) Type.setParent(this);
+    public VarDeclMore_comma (VarDecl VarDecl, VarDeclMore VarDeclMore) {
         this.VarDecl=VarDecl;
         if(VarDecl!=null) VarDecl.setParent(this);
         this.VarDeclMore=VarDeclMore;
         if(VarDeclMore!=null) VarDeclMore.setParent(this);
-    }
-
-    public Type getType() {
-        return Type;
-    }
-
-    public void setType(Type Type) {
-        this.Type=Type;
     }
 
     public VarDecl getVarDecl() {
@@ -46,41 +33,22 @@ public class VarDeclList implements SyntaxNode {
         this.VarDeclMore=VarDeclMore;
     }
 
-    public SyntaxNode getParent() {
-        return parent;
-    }
-
-    public void setParent(SyntaxNode parent) {
-        this.parent=parent;
-    }
-
-    public int getLine() {
-        return line;
-    }
-
-    public void setLine(int line) {
-        this.line=line;
-    }
-
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(Type!=null) Type.accept(visitor);
         if(VarDecl!=null) VarDecl.accept(visitor);
         if(VarDeclMore!=null) VarDeclMore.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(Type!=null) Type.traverseTopDown(visitor);
         if(VarDecl!=null) VarDecl.traverseTopDown(visitor);
         if(VarDeclMore!=null) VarDeclMore.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(Type!=null) Type.traverseBottomUp(visitor);
         if(VarDecl!=null) VarDecl.traverseBottomUp(visitor);
         if(VarDeclMore!=null) VarDeclMore.traverseBottomUp(visitor);
         accept(visitor);
@@ -89,13 +57,7 @@ public class VarDeclList implements SyntaxNode {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("VarDeclList(\n");
-
-        if(Type!=null)
-            buffer.append(Type.toString("  "+tab));
-        else
-            buffer.append(tab+"  null");
-        buffer.append("\n");
+        buffer.append("VarDeclMore_comma(\n");
 
         if(VarDecl!=null)
             buffer.append(VarDecl.toString("  "+tab));
@@ -110,7 +72,7 @@ public class VarDeclList implements SyntaxNode {
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [VarDeclList]");
+        buffer.append(") [VarDeclMore_comma]");
         return buffer.toString();
     }
 }

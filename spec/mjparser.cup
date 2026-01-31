@@ -4,6 +4,8 @@ import java_cup.runtime.*;
 import org.apache.log4j.*;
 import rs.ac.bg.etf.pp1.ast.*;
 
+/*----------------------------------------------------------------------------------------------------------------*/
+
 parser code {:
 
 
@@ -37,9 +39,13 @@ parser code {:
     
 :}
 
+/*----------------------------------------------------------------------------------------------------------------*/
+
 init with {:
 	errorDetected = false;
 :}
+
+/*----------------------------------------------------------------------------------------------------------------*/
 
 scan with {:
 	Symbol s = this.getScanner().next_token();
@@ -48,6 +54,8 @@ scan with {:
 	return s;
 :}
 
+/*----------------------------------------------------------------------------------------------------------------*/
+
 terminal PROG;
 terminal LBRACE;
 terminal RBRACE;
@@ -55,6 +63,9 @@ terminal CONST;
 terminal SEMICOLON;
 terminal EQUAL;
 terminal COMMA;
+terminal LBRACKET;
+terminal RBRACKET;
+terminal ENUM;
 terminal String IDENT;
 terminal Integer NUMBER;
 terminal Integer BOOL;
@@ -70,11 +81,18 @@ nonterminal Type;
 nonterminal ConstDecl;
 nonterminal ConstDeclMore;
 nonterminal Constant;
+nonterminal VarDecl;
+nonterminal VarDeclMore;
+nonterminal EnumDecl;
+nonterminal EnumDeclMore;
 
+/*----------------------------------------------------------------------------------------------------------------*/
 
 /* Program = "program" ident {ConstDecl | VarDecl | EnumDecl } "{" {MethodDecl} "}" */
 
 Program ::= (Program) PROG IDENT ConstVarEnumList LBRACE MethodDeclList RBRACE;
+
+/*----------------------------------------------------------------------------------------------------------------*/
 
 ConstVarEnumList ::= (ConstVarEnumList_Const) ConstVarEnumList ConstDeclList	
 					 |
@@ -84,6 +102,8 @@ ConstVarEnumList ::= (ConstVarEnumList_Const) ConstVarEnumList ConstDeclList
 					 |
 					 (ConstVarEnumList_epsilon) /* epsilon */
 					 ; 
+
+/*----------------------------------------------------------------------------------------------------------------*/
 
 /* ConstDecl = "const" Type ident"="(numConst | charConst | boolConst) {, ident "=" (numConst | charConst | boolConst)} ";" */
 
@@ -102,6 +122,42 @@ Constant ::= 	(Constant_number) NUMBER
 				|
 				(Constant_bool) BOOL
 				;
+/*----------------------------------------------------------------------------------------------------------------*/
+
+/* VarDecl = Type ident ["[" "]"] {"," ident ["[" "]"]} ";" */
+
+VarDeclList ::= (VarDeclList) Type VarDecl VarDeclMore SEMICOLON;
+
+
+VarDecl ::= (VarDecl_var) IDENT  
+			|
+			(VarDecl_array) IDENT LBRACKET RBRACKET
+			; 
+
+
+VarDeclMore ::= (VarDeclMore_comma) COMMA VarDecl VarDeclMore 
+				|
+				(VarDeclMore_epsilon) /* epsilon */
+				; 
+				
+/*----------------------------------------------------------------------------------------------------------------*/
+
+/* EnumDecl = "enum" ident "{" ident ["=" numConst] {"," ident ["=" numConst]} "}" */
+
+EnumDeclList ::= (EnumDeclList) ENUM IDENT LBRACE EnumDecl EnumDeclMore SEMICOLON;
+
+EnumDecl ::= (EnumDecl_var) IDENT
+			 |
+			 (EnumDecl_equal) IDENT EQUAL NUMBER 
+			 ;
+			 
+EnumDeclMore ::= (EnumDeclMore_comma) COMMA EnumDecl EnumDeclMore
+				 |
+				 (EnumDeclMore_epsilon) /* epsilon */
+				 ;
+
+/*----------------------------------------------------------------------------------------------------------------*/
 
 Type ::= (Type) IDENT;
 
+/*----------------------------------------------------------------------------------------------------------------*/

@@ -4,6 +4,8 @@ import java_cup.runtime.*;
 import org.apache.log4j.*;
 import rs.ac.bg.etf.pp1.ast.*;
 
+/*----------------------------------------------------------------------------------------------------------------*/
+
 parser code {:
 
 
@@ -37,9 +39,13 @@ parser code {:
     
 :}
 
+/*----------------------------------------------------------------------------------------------------------------*/
+
 init with {:
 	errorDetected = false;
 :}
+
+/*----------------------------------------------------------------------------------------------------------------*/
 
 scan with {:
 	Symbol s = this.getScanner().next_token();
@@ -48,6 +54,8 @@ scan with {:
 	return s;
 :}
 
+/*----------------------------------------------------------------------------------------------------------------*/
+
 terminal PROG;
 terminal LBRACE;
 terminal RBRACE;
@@ -55,6 +63,9 @@ terminal CONST;
 terminal SEMICOLON;
 terminal EQUAL;
 terminal COMMA;
+terminal LBRACKET;
+terminal RBRACKET;
+terminal ENUM;
 terminal String IDENT;
 terminal Integer NUMBER;
 terminal Integer BOOL;
@@ -70,11 +81,18 @@ nonterminal Type Type;
 nonterminal ConstDecl ConstDecl;
 nonterminal ConstDeclMore ConstDeclMore;
 nonterminal Constant Constant;
+nonterminal VarDecl VarDecl;
+nonterminal VarDeclMore VarDeclMore;
+nonterminal EnumDecl EnumDecl;
+nonterminal EnumDeclMore EnumDeclMore;
 
+/*----------------------------------------------------------------------------------------------------------------*/
 
 /* Program = "program" ident {ConstDecl | VarDecl | EnumDecl } "{" {MethodDecl} "}" */
 
 Program ::= (Program) PROG IDENT:I1 ConstVarEnumList:C2 LBRACE MethodDeclList:M3 RBRACE {: RESULT=new Program(I1, C2, M3); RESULT.setLine(I1left); :};
+
+/*----------------------------------------------------------------------------------------------------------------*/
 
 ConstVarEnumList ::= (ConstVarEnumList_Const) ConstVarEnumList:C1 ConstDeclList:C2 {: RESULT=new ConstVarEnumList_Const(C1, C2); RESULT.setLine(C1left); :}	
 					 |
@@ -84,6 +102,8 @@ ConstVarEnumList ::= (ConstVarEnumList_Const) ConstVarEnumList:C1 ConstDeclList:
 					 |
 					 (ConstVarEnumList_epsilon) {: RESULT=new ConstVarEnumList_epsilon(); :} /* epsilon */
 					 ; 
+
+/*----------------------------------------------------------------------------------------------------------------*/
 
 /* ConstDecl = "const" Type ident"="(numConst | charConst | boolConst) {, ident "=" (numConst | charConst | boolConst)} ";" */
 
@@ -102,6 +122,42 @@ Constant ::= 	(Constant_number) NUMBER:N1 {: RESULT=new Constant_number(N1); RES
 				|
 				(Constant_bool) BOOL:B1 {: RESULT=new Constant_bool(B1); RESULT.setLine(B1left); :}
 				;
+/*----------------------------------------------------------------------------------------------------------------*/
+
+/* VarDecl = Type ident ["[" "]"] {"," ident ["[" "]"]} ";" */
+
+VarDeclList ::= (VarDeclList) Type:T1 VarDecl:V2 VarDeclMore:V3 SEMICOLON {: RESULT=new VarDeclList(T1, V2, V3); RESULT.setLine(T1left); :};
+
+
+VarDecl ::= (VarDecl_var) IDENT:I1 {: RESULT=new VarDecl_var(I1); RESULT.setLine(I1left); :}  
+			|
+			(VarDecl_array) IDENT:I1 LBRACKET RBRACKET {: RESULT=new VarDecl_array(I1); RESULT.setLine(I1left); :}
+			; 
+
+
+VarDeclMore ::= (VarDeclMore_comma) COMMA VarDecl:V1 VarDeclMore:V2 {: RESULT=new VarDeclMore_comma(V1, V2); RESULT.setLine(V1left); :} 
+				|
+				(VarDeclMore_epsilon) {: RESULT=new VarDeclMore_epsilon(); :} /* epsilon */
+				; 
+				
+/*----------------------------------------------------------------------------------------------------------------*/
+
+/* EnumDecl = "enum" ident "{" ident ["=" numConst] {"," ident ["=" numConst]} "}" */
+
+EnumDeclList ::= (EnumDeclList) ENUM IDENT:I1 LBRACE EnumDecl:E2 EnumDeclMore:E3 SEMICOLON {: RESULT=new EnumDeclList(I1, E2, E3); RESULT.setLine(I1left); :};
+
+EnumDecl ::= (EnumDecl_var) IDENT:I1 {: RESULT=new EnumDecl_var(I1); RESULT.setLine(I1left); :}
+			 |
+			 (EnumDecl_equal) IDENT:I1 EQUAL NUMBER:N2 {: RESULT=new EnumDecl_equal(I1, N2); RESULT.setLine(I1left); :} 
+			 ;
+			 
+EnumDeclMore ::= (EnumDeclMore_comma) COMMA EnumDecl:E1 EnumDeclMore:E2 {: RESULT=new EnumDeclMore_comma(E1, E2); RESULT.setLine(E1left); :}
+				 |
+				 (EnumDeclMore_epsilon) {: RESULT=new EnumDeclMore_epsilon(); :} /* epsilon */
+				 ;
+
+/*----------------------------------------------------------------------------------------------------------------*/
 
 Type ::= (Type) IDENT:I1 {: RESULT=new Type(I1); RESULT.setLine(I1left); :};
 
+/*----------------------------------------------------------------------------------------------------------------*/

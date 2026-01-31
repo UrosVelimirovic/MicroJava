@@ -46,6 +46,7 @@ import java_cup.runtime.Symbol;
 "void" 		{ return new_symbol(sym.VOID, yytext()); }
 "switch" 	{ return new_symbol(sym.SWITCH, yytext()); }
 "case" 		{ return new_symbol(sym.CASE, yytext()); }
+"enum"		{ return new_symbol(sym.ENUM, yytext()); }
 "+" 		{ return new_symbol(sym.PLUS, yytext()); }
 "-" 		{ return new_symbol(sym.MINUS, yytext()); }
 "*" 		{ return new_symbol(sym.MUL, yytext()); }
@@ -70,7 +71,7 @@ import java_cup.runtime.Symbol;
 "(" 		{ return new_symbol(sym.LPAREN, yytext()); }
 ")" 		{ return new_symbol(sym.RPAREN, yytext()); }
 "[" 		{ return new_symbol(sym.LBRACKET, yytext()); }
-"]" 		{ return new_symbol(sym.LBRACKET, yytext()); }
+"]" 		{ return new_symbol(sym.RBRACKET, yytext()); }
 "{" 		{ return new_symbol(sym.LBRACE, yytext()); }
 "}"			{ return new_symbol(sym.RBRACE, yytext()); }
 

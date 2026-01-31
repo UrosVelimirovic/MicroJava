@@ -5,20 +5,30 @@
 
 package src.rs.ac.bg.etf.pp1.ast;
 
-public class Constant_bool extends Constant {
+public class EnumDecl_equal extends EnumDecl {
 
-    private Integer B1;
+    private String I1;
+    private Integer N2;
 
-    public Constant_bool (Integer B1) {
-        this.B1=B1;
+    public EnumDecl_equal (String I1, Integer N2) {
+        this.I1=I1;
+        this.N2=N2;
     }
 
-    public Integer getB1() {
-        return B1;
+    public String getI1() {
+        return I1;
     }
 
-    public void setB1(Integer B1) {
-        this.B1=B1;
+    public void setI1(String I1) {
+        this.I1=I1;
+    }
+
+    public Integer getN2() {
+        return N2;
+    }
+
+    public void setN2(Integer N2) {
+        this.N2=N2;
     }
 
     public void accept(Visitor visitor) {
@@ -39,13 +49,16 @@ public class Constant_bool extends Constant {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("Constant_bool(\n");
+        buffer.append("EnumDecl_equal(\n");
 
-        buffer.append(" "+tab+B1);
+        buffer.append(" "+tab+I1);
+        buffer.append("\n");
+
+        buffer.append(" "+tab+N2);
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [Constant_bool]");
+        buffer.append(") [EnumDecl_equal]");
         return buffer.toString();
     }
 }

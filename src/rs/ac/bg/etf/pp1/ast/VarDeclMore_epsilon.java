@@ -5,20 +5,9 @@
 
 package src.rs.ac.bg.etf.pp1.ast;
 
-public class Constant_bool extends Constant {
+public class VarDeclMore_epsilon extends VarDeclMore {
 
-    private Integer B1;
-
-    public Constant_bool (Integer B1) {
-        this.B1=B1;
-    }
-
-    public Integer getB1() {
-        return B1;
-    }
-
-    public void setB1(Integer B1) {
-        this.B1=B1;
+    public VarDeclMore_epsilon () {
     }
 
     public void accept(Visitor visitor) {
@@ -39,13 +28,10 @@ public class Constant_bool extends Constant {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("Constant_bool(\n");
-
-        buffer.append(" "+tab+B1);
-        buffer.append("\n");
+        buffer.append("VarDeclMore_epsilon(\n");
 
         buffer.append(tab);
-        buffer.append(") [Constant_bool]");
+        buffer.append(") [VarDeclMore_epsilon]");
         return buffer.toString();
     }
 }
