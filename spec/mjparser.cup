@@ -49,8 +49,59 @@ scan with {:
 :}
 
 terminal PROG;
-terminal Stirng IDENT;
+terminal LBRACE;
+terminal RBRACE;
+terminal CONST;
+terminal SEMICOLON;
+terminal EQUAL;
+terminal COMMA;
+terminal String IDENT;
+terminal Integer NUMBER;
+terminal Integer BOOL;
+terminal Character CHARACTER;
 
 nonterminal Program;
+nonterminal ConstVarEnumList;
+nonterminal MethodDeclList;
+nonterminal ConstDeclList;
+nonterminal VarDeclList;
+nonterminal EnumDeclList;
+nonterminal Type;
+nonterminal ConstDecl;
+nonterminal ConstDeclMore;
+nonterminal Constant;
 
-Program ::= (Program) PROG IDENT;
+
+/* Program = "program" ident {ConstDecl | VarDecl | EnumDecl } "{" {MethodDecl} "}" */
+
+Program ::= (Program) PROG IDENT ConstVarEnumList LBRACE MethodDeclList RBRACE;
+
+ConstVarEnumList ::= (ConstVarEnumList_Const) ConstVarEnumList ConstDeclList	
+					 |
+					 (ConstVarEnumList_Var) ConstVarEnumList VarDeclList
+					 |
+					 (ConstVarEnumList_Enum) ConstVarEnumList EnumDeclList
+					 |
+					 (ConstVarEnumList_epsilon) /* epsilon */
+					 ; 
+
+/* ConstDecl = "const" Type ident"="(numConst | charConst | boolConst) {, ident "=" (numConst | charConst | boolConst)} ";" */
+
+ConstDeclList ::= (ConstDeclList) CONST Type ConstDecl ConstDeclMore SEMICOLON;
+
+ConstDecl ::= (ConstDecl) IDENT EQUAL Constant;
+
+ConstDeclMore ::= (ConstDeclMore_comma) COMMA ConstDecl ConstDeclMore
+				|
+				(ConstDeclMore_epsilon) /* epsilon */
+				;
+
+Constant ::= 	(Constant_number) NUMBER
+				|
+				(Constant_character) CHARACTER
+				|
+				(Constant_bool) BOOL
+				;
+
+Type ::= (Type) IDENT;
+

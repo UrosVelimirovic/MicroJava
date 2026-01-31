@@ -48,16 +48,10 @@ scan with {:
 	return s;
 :}
 
-terminal PROG;
-terminal LBRACE;
-terminal RBRACE;
-terminal CONST;
-terminal SEMICOLON;
-terminal EQUAL;
+terminal PROG, LBRACE, RBRACE, CONST, SEMICOLON, EQUAL;
 terminal COMMA;
 terminal String IDENT;
-terminal Integer NUMBER;
-terminal Integer BOOL;
+terminal Integer NUMBER, BOOL;
 terminal Character CHARACTER;
 
 nonterminal Program Program;
