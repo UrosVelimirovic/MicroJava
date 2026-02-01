@@ -65,6 +65,7 @@ terminal EQUAL;
 terminal COMMA;
 terminal LBRACKET;
 terminal RBRACKET;
+terminal ENUM;
 terminal String IDENT;
 terminal Integer NUMBER;
 terminal Integer BOOL;

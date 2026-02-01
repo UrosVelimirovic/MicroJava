@@ -1,3 +1,5 @@
+/*----------------------------------------------------------------------------------------------------------------*/
+
 package rs.ac.bg.etf.pp1;
 
 import java_cup.runtime.*;
@@ -7,7 +9,6 @@ import rs.ac.bg.etf.pp1.ast.*;
 /*----------------------------------------------------------------------------------------------------------------*/
 
 parser code {:
-
 
 	boolean errorDetected;
 	
@@ -56,16 +57,53 @@ scan with {:
 
 /*----------------------------------------------------------------------------------------------------------------*/
 
+/* Keywords */
 terminal PROG;
-terminal LBRACE;
-terminal RBRACE;
-terminal CONST;
-terminal SEMICOLON;
+terminal ELSE;
+terminal IF;
+terminal BREAK;
+terminal CONTINUE;
+terminal FOR;
+terminal PRINT;
+terminal READ;
+terminal RETURN;
+terminal VOID;
+terminal SWITCH;
+terminal CASE;
+terminal ENUM;
+
+/* Operators */
+terminal PLUS;
+terminal MINUS;
+terminal MUL;
+terminal DIV;
+terminal MOD;
+terminal EQUALEQUAL;
+terminal NOTEQUAL;
+terminal BIGGERTHAN;
+terminal BIGGEROREQUALTHAN;
+terminal SMALLERTHAN;
+terminal SMALLEROREQUALTHAN;
+terminal ANDAND;
+terminal OROR;
 terminal EQUAL;
+terminal INC;
+terminal DEC;
+
+/* Punctuation */
+terminal SEMICOLON;
+terminal COLON;
 terminal COMMA;
+terminal DOT;
+terminal QUESTIONMARK;
+terminal LPAREN;
+terminal RPAREN;
 terminal LBRACKET;
 terminal RBRACKET;
-terminal ENUM;
+terminal LBRACE;
+terminal RBRACE;
+
+/* Special */
 terminal String IDENT;
 terminal Integer NUMBER;
 terminal Integer BOOL;
@@ -85,6 +123,23 @@ nonterminal VarDecl;
 nonterminal VarDeclMore;
 nonterminal EnumDecl;
 nonterminal EnumDeclMore;
+nonterminal MethodDecl;
+nonterminal MethodReturnTypeAndName;
+nonterminal VarDeclListInMethod;
+nonterminal FormParsList;
+nonterminal FormPars;
+nonterminal FormParsMore;
+nonterminal StatementList;
+nonterminal Statements;
+nonterminal SingleStatement;
+nonterminal ElseStatement;
+nonterminal CaseList;
+nonterminal CaseClause;
+nonterminal ForInit;
+nonterminal ForCondition;
+nonterminal ForStep;
+nonterminal Condition;
+nonterminal ConditionMore;
 
 /*----------------------------------------------------------------------------------------------------------------*/
 
@@ -122,6 +177,7 @@ Constant ::= 	(Constant_number) NUMBER
 				|
 				(Constant_bool) BOOL
 				;
+				
 /*----------------------------------------------------------------------------------------------------------------*/
 
 /* VarDecl = Type ident ["[" "]"] {"," ident ["[" "]"]} ";" */
@@ -156,8 +212,323 @@ EnumDeclMore ::= (EnumDeclMore_comma) COMMA EnumDecl EnumDeclMore
 				 (EnumDeclMore_epsilon) /* epsilon */
 				 ;
 
+
+/*----------------------------------------------------------------------------------------------------------------*/
+
+/* MethodDecl = (Type | "void") ident "(" [FormPars] ")" {VarDecl} "{" {Statement} "}" */
+
+MethodDeclList ::= 	(MethodDeclList_rec) MethodDeclList  MethodDecl
+					|
+					(MethodDeclList_epsilon) /* epsilon */
+					;
+
+MethodDecl ::= (MethodDecl) MethodReturnTypeAndName LPAREN FormParsList RPAREN VarDeclListInMethod LBRACE StatementList RBRACE;
+
+MethodReturnTypeAndName ::= (MethodReturnTypeAndName_Type) Type IDENT
+							|
+							(MethodReturnTypeAndName_void) VOID IDENT
+							;
+
+VarDeclListInMethod ::= (VarDeclListInMethod_recursive) VarDeclListInMethod VarDeclList
+						|
+						(VarDeclListRec_epsilon) /* epsilon */
+						;
+					
+/*----------------------------------------------------------------------------------------------------------------*/
+
+/* FormPars = Type ident ["[" "]"] {"," Type ident ["[" "]"]} */
+
+FormParsList ::= 	(FormParsList_recursive) FormPars FormParsMore
+					|
+					(FormParsList_epsilon) /* epsilon */
+					;
+					
+FormPars ::= (FormPars_var) Type IDENT  
+		     |
+			 (FormPars_array) Type IDENT LBRACKET RBRACKET
+			 ; 
+
+FormParsMore ::= (FormParsMore_comma) COMMA FormPars FormParsMore
+				 |
+				 (FormParsMore_epsilon) /* epsilon */
+				 ;
+				
 /*----------------------------------------------------------------------------------------------------------------*/
 
 Type ::= (Type) IDENT;
 
 /*----------------------------------------------------------------------------------------------------------------*/
+
+/*
+			Statement = DesignatorStatement ";"
+			| "if" "(" Condition ")" Statement ["else" Statement]
+			| "break" ";"
+			| "continue" ";"
+			| "return" [Expr] ";"
+			| "read" "(" Designator ")" ";"
+			| "print" "(" Expr ["," numConst] ")" ";"
+			| "switch" "(" Expr ")" "{" {"case" numConst ":" {Statement} } "}"
+			| "for" "(" [DesignatorStatement] ";" [Condition] ";" [DesignatorStatement] ")" Statement
+			| "{" {Statement} "}".
+*/
+
+StatementList ::= 	(StatementList_recursive) StatementList Statement
+				   	|										   
+				  	(StatementList_epsilon) /* epsilon */
+				   	;
+
+Statement ::= (Statement_SingleStatement) SingleStatement
+			  |
+			  (Statement_s) Statements
+
+Statements ::= (Statements) LBRACE StatementList RBRACE;
+
+SingleStatement ::= (SingleStatement_ds) DesignatorStatement SEMICOLON
+					|
+					(SingleStatement_if) IF LPAREN Condition RPAREN Statement ElseStatement
+					|					
+					(SingleStatement_break) BREAK SEMICOLON
+					|
+					(SingleStatement_continue) CONTINUE SEMICOLON
+					|
+					(SingleStatement_returnSemiColon) RETURN SEMICOLON
+			  		|
+			  		(SingleStatement_returnExpr) RETURN Expr SEMICOLON
+			  		|
+			  		(SingleStatement_read) READ LPAREN Designator RPAREN SEMICOLON
+			  		|
+			  		(SingleStatement_print1) PRINT LPAREN Expr RPAREN SEMICOLON
+			  		|
+			  		(SingleStatement_print2) PRINT LPAREN Expr COMMA NUMBER RPAREN SEMICOLON
+					|
+					(SingleStatement_switch) SWITCH LPAREN Expr RPAREN LBRACE CaseList RBRACE
+					|
+					(SingleStatement_for) FOR LPAREN ForInit SEMICOLON ForCondition SEMICOLON ForStep RPAREN Statement
+
+/*----------------------------------------------------------------------------------------------------------------*/
+
+ElseStatement ::= 	(ElseStatement_yes) ELSE Statement
+					|
+					(ElseStatement_no) /* epsilon */
+					;
+
+/*----------------------------------------------------------------------------------------------------------------*/
+					
+CaseList ::= (CaseList_recursive) CaseList CaseClause
+			 |
+			 (CaseList_epsilon) /* epsilon */
+			 ;
+
+CaseClause ::= (CaseClause) CASE NUMBER COLON Statement;
+			   
+/*----------------------------------------------------------------------------------------------------------------*/
+
+ForInit ::= (ForInit) DesignatorStatement
+			|
+			(ForInit_epsilon) /* epsilon */
+			;
+
+ForCondition ::= (ForCondition) Condition
+				 |
+				 (ForCondition_epsilon) /* epsilon */
+				 ;
+
+ForStep ::= (ForStep) DesignatorStatement
+		    |
+		    (ForStep_epsilon) /* epsilon */
+		    ;
+		    
+/*----------------------------------------------------------------------------------------------------------------*/
+
+/* Condition = CondTerm {"||" CondTerm} */
+
+Condition ::= (Condition) CondTermList;
+
+CondTermList ::= 	(CondTermList_or) CondTermList OROR CondTerm
+				 	|
+					(CondTermList_ct) CondTerm
+					;
+/*----------------------------------------------------------------------------------------------------------------*/
+
+/* CondTerm = CondFact {"&&" CondFact} */
+
+CondTerm ::= (CondTerm) CondFactList;
+			 
+/*----------------------------------------------------------------------------------------------------------------*/
+
+/* CondFact = Expr [Relop Expr] */
+
+CondFactList ::= 	(CondFactList_and) CondFactList AND CondFact 
+				 	|
+					(CondFactList_condfact) CondFact
+					;
+					
+CondFact ::= 	(CondFact_expr) Expr
+				| 
+				(CondFact_expr_relop_expr) Expr Relop Expr
+				;	
+				
+/*----------------------------------------------------------------------------------------------------------------*/
+				
+/* DesignatorStatement = Designator (Assignop Expr | "(" [ActPars] ")" | "++" | "‐‐") */
+
+DesignatorStatement ::= (DesignatorStatement_assign) Designator EQUAL Expr
+						|
+						(DesignatorStatement_error) error:
+						{: parser.report_error("Oporavak od greske u DS. Linija: " + eleft, null); :}
+						|
+						(DesignatorStatement_meth) Designator LPAREN ActParsList RPAREN 
+						|
+						(DesignatorStatement_inc) Designator INC
+						|
+						(DesignatorStatement_dec) Designator DEC
+						;
+
+/*----------------------------------------------------------------------------------------------------------------*/
+
+/* Designator = ident {"." ( ident | "length") | "[" Expr "]"} */
+
+/*
+ Vrste:
+ 	enum
+ 	enum.ident
+ 	niz
+ 	niz[]
+ 	niz[].length
+*/
+Designator ::= 	(Designator_var) IDENT
+				|
+				(Designator_rec) DesignatorEnum
+				|
+				(Designator_elem) DesignatorArrayName LBRACKET Expr RBRACKET
+				|
+				(Designator_rec_elem) DesignatorArrayName LBRACKET Expr RBRACKET DesignatorEnumMore
+				;
+
+DesignatorEnum ::= (DesignatorEnum) IDENT;
+				   |
+				   (DesignatorEnum_dot) IDENT DOT IDENT
+
+/*----------------------------------------------------------------------------------------------------------------*/
+
+/*		
+		Expr = ["-"] Term {Addop Term} 			!!!ATTENTION!!! THIS "-" SIGN IS IN WRONG PLACE IN PROJECT DESCRIPTION!!!
+				| CondFact "?" Expr ":" Expr * za A nivo
+				| Condition "?" Expr ":" Expr * za B i C nivo
+*/
+
+Expr ::= (Expr)  AddopTermList;
+		 |
+		 (Expr_ternaryCondFact) CondFactList QUESTIONMARK Expr COLON Expr
+		 |
+		 (Expr_ternaryCondition) Condition QUESTIONMARK Expr COLON Expr
+		 ;
+		 
+AddopTermList ::= 	(AddopTermList_add) AddopTermList Addop Term
+					|
+					(AddopTermList_term) Term
+					;
+              
+/*----------------------------------------------------------------------------------------------------------------*/
+
+/* Term = Factor {Mulop Factor} */
+
+Term ::= (Term) MulopFactorList;
+
+MulopFactorList ::= (MulopFactorList_mul) MulopFactorList Mulop Factor
+					|
+					(MulopFactorList_factor) Factor
+					;
+
+/*----------------------------------------------------------------------------------------------------------------*/
+
+/*
+	Factor = Designator ["(" [ActPars] ")"]
+			| numConst
+			| charConst
+			| boolConst
+			| "new" Type [ "[" Expr "]" ]
+			| "(" Expr ")".
+*/
+					
+Factor ::= (Factor) Unary FactorSub;
+
+FactorSub ::= 	(FactorSub_var) Designator
+				|
+				(FactorSub_meth) Designator LPAREN ActParsList RPAREN
+		   		|
+		   		(FactorSub_n) NUMBER
+		   		|
+		   		(FactorSub_c) CHARACTER
+		   		|
+		   		(FactorSub_b) BOOL
+		   		|		   
+		   		(FactorSub_new_array) NEW Type LBRACKET Expr RBRACKET
+		   		|		   
+		   		(FactorSub_new_record) NEW Type
+		   		|
+		   		(FactorSub_expr) LPAREN Expr RPAREN
+		   		
+Unary ::= 	(Unary_minus) MINUS
+			|
+			(Unary_epsilon) /* epsilon */
+			;
+			
+/*----------------------------------------------------------------------------------------------------------------*/
+
+/* ActPars = Expr {"," Expr} */
+
+ActParsList ::= 	(ActParsList_rec) ActPars ActParsMore
+					|
+					(ActParsList_epsilon) /* epsilon */
+					;
+
+ActParsMore ::= 	(ActParsMore_comma) COMMA ActPars ActParsMore
+					|
+					(ActParsMore_epsilon) /* epsilon */
+					;
+				
+ActPars ::= (ActPars) Expr;
+
+/*----------------------------------------------------------------------------------------------------------------*/
+
+/* Addop = "+" | "‐" */
+
+Addop ::= (Addop_plus) PLUS
+		  |
+		  (Addop_minus) MINUS
+		  ;
+		  
+/*----------------------------------------------------------------------------------------------------------------*/
+
+/* Relop = "==" | "!=" | ">" | ">=" | "<" | "<=" */
+
+Relop::=	(Relop_eq) EQUALEQUAL
+			|
+			(Relop_ne) NOTEQUAL
+			|
+			(Relop_gt) BIGGERTHAN
+			|
+			(Relop_ge) BIGGEROREQUALTHAN
+			|
+			(Relop_lt) SMALLERTHAN
+			|
+			(Relop_le) SMALLEROREQUALTHAN
+			;
+			
+/*----------------------------------------------------------------------------------------------------------------*/
+
+/* Mulop = "*" | "/" | "%". */
+
+Mulop ::= (Mulop_mul) MUL
+		  |		  
+		  (Mulop_div) DIV
+		  |
+		  (Mulop_rem) MOD
+		  ;
+		  
+/*----------------------------------------------------------------------------------------------------------------*/
+
+/* DesignatorStatement = Designator (Assignop Expr | "(" [ActPars] ")" | "++" | "‐‐") */
+
+
