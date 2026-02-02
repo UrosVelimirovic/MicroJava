@@ -47,6 +47,7 @@ import java_cup.runtime.Symbol;
 "switch" 	{ return new_symbol(sym.SWITCH, yytext()); }
 "case" 		{ return new_symbol(sym.CASE, yytext()); }
 "enum"		{ return new_symbol(sym.ENUM, yytext()); }
+"new"		{ return new_symbol(sym.NEW, yytext()); }
 "+" 		{ return new_symbol(sym.PLUS, yytext()); }
 "-" 		{ return new_symbol(sym.MINUS, yytext()); }
 "*" 		{ return new_symbol(sym.MUL, yytext()); }

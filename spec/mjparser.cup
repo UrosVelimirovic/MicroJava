@@ -71,6 +71,9 @@ terminal VOID;
 terminal SWITCH;
 terminal CASE;
 terminal ENUM;
+terminal CONST;
+terminal NEW;
+terminal LENGTH;
 
 /* Operators */
 terminal PLUS;
@@ -139,7 +142,27 @@ nonterminal ForInit;
 nonterminal ForCondition;
 nonterminal ForStep;
 nonterminal Condition;
-nonterminal ConditionMore;
+nonterminal CondTerm;
+nonterminal CondTermList;
+nonterminal CondFact;
+nonterminal CondFactList;
+
+nonterminal AddopTermList;
+nonterminal MulopFactorList;
+
+nonterminal Unary;
+nonterminal FactorSub;
+
+nonterminal ActParsList;
+nonterminal ActPars;
+nonterminal ActParsMore;
+
+nonterminal DesignatorStatement;
+nonterminal Designator;
+
+/*----------------------------------------------------------------------------------------------------------------*/
+
+precedence left ELSE;
 
 /*----------------------------------------------------------------------------------------------------------------*/
 
@@ -358,7 +381,7 @@ CondTerm ::= (CondTerm) CondFactList;
 
 /* CondFact = Expr [Relop Expr] */
 
-CondFactList ::= 	(CondFactList_and) CondFactList AND CondFact 
+CondFactList ::= 	(CondFactList_and) CondFactList ANDAND CondFact 
 				 	|
 					(CondFactList_condfact) CondFact
 					;
@@ -390,24 +413,21 @@ DesignatorStatement ::= (DesignatorStatement_assign) Designator EQUAL Expr
 
 /*
  Vrste:
- 	enum
- 	enum.ident
- 	niz
- 	niz[]
- 	niz[].length
+ 	1 enum
+ 	2 enum.ident
+ 	3 niz
+ 	4 niz[expr]
+ 	5 niz.length
 */
-Designator ::= 	(Designator_var) IDENT
-				|
-				(Designator_rec) DesignatorEnum
-				|
-				(Designator_elem) DesignatorArrayName LBRACKET Expr RBRACKET
-				|
-				(Designator_rec_elem) DesignatorArrayName LBRACKET Expr RBRACKET DesignatorEnumMore
-				;
 
-DesignatorEnum ::= (DesignatorEnum) IDENT;
-				   |
-				   (DesignatorEnum_dot) IDENT DOT IDENT
+Designator ::= 	(Designator_1and3) IDENT /* 1 and 3 */	
+				|
+				(Designator_2) IDENT DOT IDENT	/* 2 */	
+				|
+				(Designator_4) IDENT LBRACKET Expr RBRACKET /* 4 */
+				|
+				(Designator_5) IDENT DOT LENGTH	/* 5 */			
+				;
 
 /*----------------------------------------------------------------------------------------------------------------*/
 
@@ -417,7 +437,7 @@ DesignatorEnum ::= (DesignatorEnum) IDENT;
 				| Condition "?" Expr ":" Expr * za B i C nivo
 */
 
-Expr ::= (Expr)  AddopTermList;
+Expr ::= (Expr)  AddopTermList
 		 |
 		 (Expr_ternaryCondFact) CondFactList QUESTIONMARK Expr COLON Expr
 		 |
@@ -464,8 +484,6 @@ FactorSub ::= 	(FactorSub_var) Designator
 		   		(FactorSub_b) BOOL
 		   		|		   
 		   		(FactorSub_new_array) NEW Type LBRACKET Expr RBRACKET
-		   		|		   
-		   		(FactorSub_new_record) NEW Type
 		   		|
 		   		(FactorSub_expr) LPAREN Expr RPAREN
 		   		
