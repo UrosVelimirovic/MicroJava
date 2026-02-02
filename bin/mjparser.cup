@@ -57,7 +57,6 @@ scan with {:
 
 /*----------------------------------------------------------------------------------------------------------------*/
 
-/* Keywords */
 terminal PROG;
 terminal ELSE;
 terminal IF;
@@ -75,7 +74,6 @@ terminal CONST;
 terminal NEW;
 terminal LENGTH;
 
-/* Operators */
 terminal PLUS;
 terminal MINUS;
 terminal MUL;
@@ -93,7 +91,6 @@ terminal EQUAL;
 terminal INC;
 terminal DEC;
 
-/* Punctuation */
 terminal SEMICOLON;
 terminal COLON;
 terminal COMMA;
@@ -106,11 +103,12 @@ terminal RBRACKET;
 terminal LBRACE;
 terminal RBRACE;
 
-/* Special */
 terminal String IDENT;
 terminal Integer NUMBER;
 terminal Integer BOOL;
 terminal Character CHARACTER;
+
+/*----------------------------------------------------------------------------------------------------------------*/
 
 nonterminal Program;
 nonterminal ConstVarEnumList;
@@ -132,6 +130,7 @@ nonterminal VarDeclListInMethod;
 nonterminal FormParsList;
 nonterminal FormPars;
 nonterminal FormParsMore;
+nonterminal Statement;
 nonterminal StatementList;
 nonterminal Statements;
 nonterminal SingleStatement;
@@ -147,6 +146,11 @@ nonterminal CondTermList;
 nonterminal CondFact;
 nonterminal CondFactList;
 
+nonterminal Expr;
+nonterminal NonTernaryExpr;
+nonterminal TernaryExpr;
+nonterminal Term;
+nonterminal Factor;
 nonterminal AddopTermList;
 nonterminal MulopFactorList;
 
@@ -159,6 +163,10 @@ nonterminal ActParsMore;
 
 nonterminal DesignatorStatement;
 nonterminal Designator;
+
+nonterminal Relop;
+nonterminal Addop;
+nonterminal Mulop;
 
 /*----------------------------------------------------------------------------------------------------------------*/
 
@@ -303,6 +311,7 @@ StatementList ::= 	(StatementList_recursive) StatementList Statement
 Statement ::= (Statement_SingleStatement) SingleStatement
 			  |
 			  (Statement_s) Statements
+			  ;
 
 Statements ::= (Statements) LBRACE StatementList RBRACE;
 
@@ -327,6 +336,7 @@ SingleStatement ::= (SingleStatement_ds) DesignatorStatement SEMICOLON
 					(SingleStatement_switch) SWITCH LPAREN Expr RPAREN LBRACE CaseList RBRACE
 					|
 					(SingleStatement_for) FOR LPAREN ForInit SEMICOLON ForCondition SEMICOLON ForStep RPAREN Statement
+					;
 
 /*----------------------------------------------------------------------------------------------------------------*/
 
@@ -386,9 +396,9 @@ CondFactList ::= 	(CondFactList_and) CondFactList ANDAND CondFact
 					(CondFactList_condfact) CondFact
 					;
 					
-CondFact ::= 	(CondFact_expr) Expr
+CondFact ::= 	(CondFact_expr) NonTernaryExpr
 				| 
-				(CondFact_expr_relop_expr) Expr Relop Expr
+				(CondFact_expr_relop_expr) NonTernaryExpr Relop NonTernaryExpr
 				;	
 				
 /*----------------------------------------------------------------------------------------------------------------*/
@@ -396,9 +406,6 @@ CondFact ::= 	(CondFact_expr) Expr
 /* DesignatorStatement = Designator (Assignop Expr | "(" [ActPars] ")" | "++" | "‐‐") */
 
 DesignatorStatement ::= (DesignatorStatement_assign) Designator EQUAL Expr
-						|
-						(DesignatorStatement_error) error:
-						{: parser.report_error("Oporavak od greske u DS. Linija: " + eleft, null); :}
 						|
 						(DesignatorStatement_meth) Designator LPAREN ActParsList RPAREN 
 						|
@@ -437,12 +444,21 @@ Designator ::= 	(Designator_1and3) IDENT /* 1 and 3 */
 				| Condition "?" Expr ":" Expr * za B i C nivo
 */
 
-Expr ::= (Expr)  AddopTermList
+Expr ::= (Expr_NonTernary) NonTernaryExpr
 		 |
-		 (Expr_ternaryCondFact) CondFactList QUESTIONMARK Expr COLON Expr
-		 |
-		 (Expr_ternaryCondition) Condition QUESTIONMARK Expr COLON Expr
+		 (Expr_Ternary) TernaryExpr
 		 ;
+		 
+NonTernaryExpr ::= (NonTernaryExpr) AddopTermList;
+
+TernaryExpr ::= (TernaryExpr) Condition QUESTIONMARK Expr COLON Expr;
+
+/*
+						Expr ::= (Expr)  AddopTermList
+								 |
+								 (Expr_ternaryCondition) Condition QUESTIONMARK Expr COLON Expr
+								 ;
+*/
 		 
 AddopTermList ::= 	(AddopTermList_add) AddopTermList Addop Term
 					|
@@ -486,6 +502,7 @@ FactorSub ::= 	(FactorSub_var) Designator
 		   		(FactorSub_new_array) NEW Type LBRACKET Expr RBRACKET
 		   		|
 		   		(FactorSub_expr) LPAREN Expr RPAREN
+		   		;
 		   		
 Unary ::= 	(Unary_minus) MINUS
 			|
@@ -547,6 +564,5 @@ Mulop ::= (Mulop_mul) MUL
 		  
 /*----------------------------------------------------------------------------------------------------------------*/
 
-/* DesignatorStatement = Designator (Assignop Expr | "(" [ActPars] ")" | "++" | "‐‐") */
 
 
