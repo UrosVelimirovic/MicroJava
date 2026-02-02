@@ -1,0 +1,10 @@
+program Keske
+
+const int pi = 3;
+const char c = 'c';
+const bool b = true;
+
+
+{
+	void main(){}
+}

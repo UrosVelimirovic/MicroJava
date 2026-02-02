@@ -1,9 +1,9 @@
 // generated with ast extension for cup
 // version 0.8
-// 2/1/2026 21:45:3
+// 2/1/2026 22:14:1
 
 
-package src.rs.ac.bg.etf.pp1.ast;
+package rs.ac.bg.etf.pp1.ast;
 
 public class ActParsList_rec extends ActParsList {
 

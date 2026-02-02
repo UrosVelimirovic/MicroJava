@@ -356,17 +356,17 @@ CaseClause ::= (CaseClause) CASE NUMBER COLON Statement;
 			   
 /*----------------------------------------------------------------------------------------------------------------*/
 
-ForInit ::= (ForInit) DesignatorStatement
+ForInit ::= (ForInit_DesignatorStatement) DesignatorStatement
 			|
 			(ForInit_epsilon) /* epsilon */
 			;
 
-ForCondition ::= (ForCondition) Condition
+ForCondition ::= (ForCondition_Condition) Condition
 				 |
 				 (ForCondition_epsilon) /* epsilon */
 				 ;
 
-ForStep ::= (ForStep) DesignatorStatement
+ForStep ::= (ForStep_DesignatorStatement) DesignatorStatement
 		    |
 		    (ForStep_epsilon) /* epsilon */
 		    ;

@@ -356,17 +356,17 @@ CaseClause ::= (CaseClause) CASE NUMBER:N1 COLON Statement:S2 {: RESULT=new Case
 			   
 /*----------------------------------------------------------------------------------------------------------------*/
 
-ForInit ::= (ForInit) DesignatorStatement:D1 {: RESULT=new ForInit(D1); RESULT.setLine(D1left); :}
+ForInit ::= (ForInit_DesignatorStatement) DesignatorStatement:D1 {: RESULT=new ForInit_DesignatorStatement(D1); RESULT.setLine(D1left); :}
 			|
 			(ForInit_epsilon) {: RESULT=new ForInit_epsilon(); :} /* epsilon */
 			;
 
-ForCondition ::= (ForCondition) Condition:C1 {: RESULT=new ForCondition(C1); RESULT.setLine(C1left); :}
+ForCondition ::= (ForCondition_Condition) Condition:C1 {: RESULT=new ForCondition_Condition(C1); RESULT.setLine(C1left); :}
 				 |
 				 (ForCondition_epsilon) {: RESULT=new ForCondition_epsilon(); :} /* epsilon */
 				 ;
 
-ForStep ::= (ForStep) DesignatorStatement:D1 {: RESULT=new ForStep(D1); RESULT.setLine(D1left); :}
+ForStep ::= (ForStep_DesignatorStatement) DesignatorStatement:D1 {: RESULT=new ForStep_DesignatorStatement(D1); RESULT.setLine(D1left); :}
 		    |
 		    (ForStep_epsilon) {: RESULT=new ForStep_epsilon(); :} /* epsilon */
 		    ;

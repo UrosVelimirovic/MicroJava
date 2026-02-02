@@ -1,0 +1,96 @@
+INFO  22:16:00,904 - Compiling source file: /Users/uvelimirovic/eclipse-workspace/MJCompiler/test/program.mj
+INFO  22:16:00,921 - #2 program
+INFO  22:16:00,921 - #45 Keske
+INFO  22:16:00,921 - #15 const
+INFO  22:16:00,922 - #45 int
+INFO  22:16:00,922 - #45 pi
+INFO  22:16:00,922 - #31 =
+INFO  22:16:00,922 - #46 3
+INFO  22:16:00,922 - #34 ;
+INFO  22:16:00,922 - #15 const
+INFO  22:16:00,922 - #45 char
+INFO  22:16:00,922 - #45 c
+INFO  22:16:00,923 - #31 =
+INFO  22:16:00,923 - #48 c
+INFO  22:16:00,923 - #34 ;
+INFO  22:16:00,923 - #15 const
+INFO  22:16:00,923 - #45 bool
+INFO  22:16:00,923 - #45 b
+INFO  22:16:00,923 - #31 =
+INFO  22:16:00,923 - #47 1
+INFO  22:16:00,923 - #34 ;
+INFO  22:16:00,923 - #43 {
+INFO  22:16:00,923 - #11 void
+INFO  22:16:00,923 - #45 main
+INFO  22:16:00,923 - #39 (
+INFO  22:16:00,923 - #40 )
+INFO  22:16:00,923 - #43 {
+INFO  22:16:00,923 - #44 }
+INFO  22:16:00,924 - #44 }
+INFO  22:16:00,924 - Program(
+ Keske
+  ConstVarEnumList_Const(
+    ConstVarEnumList_Const(
+      ConstVarEnumList_Const(
+        ConstVarEnumList_epsilon(
+        ) [ConstVarEnumList_epsilon]
+        ConstDeclList(
+          Type(
+           int
+          ) [Type]
+          ConstDecl(
+           pi
+            Constant_number(
+             3
+            ) [Constant_number]
+          ) [ConstDecl]
+          ConstDeclMore_epsilon(
+          ) [ConstDeclMore_epsilon]
+        ) [ConstDeclList]
+      ) [ConstVarEnumList_Const]
+      ConstDeclList(
+        Type(
+         char
+        ) [Type]
+        ConstDecl(
+         c
+          Constant_character(
+           c
+          ) [Constant_character]
+        ) [ConstDecl]
+        ConstDeclMore_epsilon(
+        ) [ConstDeclMore_epsilon]
+      ) [ConstDeclList]
+    ) [ConstVarEnumList_Const]
+    ConstDeclList(
+      Type(
+       bool
+      ) [Type]
+      ConstDecl(
+       b
+        Constant_bool(
+         1
+        ) [Constant_bool]
+      ) [ConstDecl]
+      ConstDeclMore_epsilon(
+      ) [ConstDeclMore_epsilon]
+    ) [ConstDeclList]
+  ) [ConstVarEnumList_Const]
+  MethodDeclList_rec(
+    MethodDeclList_epsilon(
+    ) [MethodDeclList_epsilon]
+    MethodDecl(
+      MethodReturnTypeAndName_void(
+       main
+      ) [MethodReturnTypeAndName_void]
+      FormParsList_epsilon(
+      ) [FormParsList_epsilon]
+      VarDeclListRec_epsilon(
+      ) [VarDeclListRec_epsilon]
+      StatementList_epsilon(
+      ) [StatementList_epsilon]
+    ) [MethodDecl]
+  ) [MethodDeclList_rec]
+) [Program]
+INFO  22:16:00,924 - =====================================================================
+INFO  22:16:00,924 - Parsiranje uspesno zavrseno!

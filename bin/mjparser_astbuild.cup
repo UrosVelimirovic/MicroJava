@@ -147,6 +147,8 @@ nonterminal CondFact CondFact;
 nonterminal CondFactList CondFactList;
 
 nonterminal Expr Expr;
+nonterminal NonTernaryExpr NonTernaryExpr;
+nonterminal TernaryExpr TernaryExpr;
 nonterminal Term Term;
 nonterminal Factor Factor;
 nonterminal AddopTermList AddopTermList;
@@ -354,17 +356,17 @@ CaseClause ::= (CaseClause) CASE NUMBER:N1 COLON Statement:S2 {: RESULT=new Case
 			   
 /*----------------------------------------------------------------------------------------------------------------*/
 
-ForInit ::= (ForInit) DesignatorStatement:D1 {: RESULT=new ForInit(D1); RESULT.setLine(D1left); :}
+ForInit ::= (ForInit_DesignatorStatement) DesignatorStatement:D1 {: RESULT=new ForInit_DesignatorStatement(D1); RESULT.setLine(D1left); :}
 			|
 			(ForInit_epsilon) {: RESULT=new ForInit_epsilon(); :} /* epsilon */
 			;
 
-ForCondition ::= (ForCondition) Condition:C1 {: RESULT=new ForCondition(C1); RESULT.setLine(C1left); :}
+ForCondition ::= (ForCondition_Condition) Condition:C1 {: RESULT=new ForCondition_Condition(C1); RESULT.setLine(C1left); :}
 				 |
 				 (ForCondition_epsilon) {: RESULT=new ForCondition_epsilon(); :} /* epsilon */
 				 ;
 
-ForStep ::= (ForStep) DesignatorStatement:D1 {: RESULT=new ForStep(D1); RESULT.setLine(D1left); :}
+ForStep ::= (ForStep_DesignatorStatement) DesignatorStatement:D1 {: RESULT=new ForStep_DesignatorStatement(D1); RESULT.setLine(D1left); :}
 		    |
 		    (ForStep_epsilon) {: RESULT=new ForStep_epsilon(); :} /* epsilon */
 		    ;
@@ -394,9 +396,9 @@ CondFactList ::= 	(CondFactList_and) CondFactList:C1 ANDAND CondFact:C2 {: RESUL
 					(CondFactList_condfact) CondFact:C1 {: RESULT=new CondFactList_condfact(C1); RESULT.setLine(C1left); :}
 					;
 					
-CondFact ::= 	(CondFact_expr) Expr:E1 {: RESULT=new CondFact_expr(E1); RESULT.setLine(E1left); :}
+CondFact ::= 	(CondFact_expr) NonTernaryExpr:N1 {: RESULT=new CondFact_expr(N1); RESULT.setLine(N1left); :}
 				| 
-				(CondFact_expr_relop_expr) Expr:E1 Relop:R2 Expr:E3 {: RESULT=new CondFact_expr_relop_expr(E1, R2, E3); RESULT.setLine(E1left); :}
+				(CondFact_expr_relop_expr) NonTernaryExpr:N1 Relop:R2 NonTernaryExpr:N3 {: RESULT=new CondFact_expr_relop_expr(N1, R2, N3); RESULT.setLine(N1left); :}
 				;	
 				
 /*----------------------------------------------------------------------------------------------------------------*/
@@ -442,12 +444,21 @@ Designator ::= 	(Designator_1and3) IDENT:I1 {: RESULT=new Designator_1and3(I1); 
 				| Condition "?" Expr ":" Expr * za B i C nivo
 */
 
-Expr ::= (Expr)  AddopTermList:A1 {: RESULT=new Expr(A1); RESULT.setLine(A1left); :}
+Expr ::= (Expr_NonTernary) NonTernaryExpr:N1 {: RESULT=new Expr_NonTernary(N1); RESULT.setLine(N1left); :}
 		 |
-		 (Expr_ternaryCondFact) CondFactList:C1 QUESTIONMARK Expr:E2 COLON Expr:E3 {: RESULT=new Expr_ternaryCondFact(C1, E2, E3); RESULT.setLine(C1left); :}
-		 |
-		 (Expr_ternaryCondition) Condition:C1 QUESTIONMARK Expr:E2 COLON Expr:E3 {: RESULT=new Expr_ternaryCondition(C1, E2, E3); RESULT.setLine(C1left); :}
+		 (Expr_Ternary) TernaryExpr:T1 {: RESULT=new Expr_Ternary(T1); RESULT.setLine(T1left); :}
 		 ;
+		 
+NonTernaryExpr ::= (NonTernaryExpr) AddopTermList:A1 {: RESULT=new NonTernaryExpr(A1); RESULT.setLine(A1left); :};
+
+TernaryExpr ::= (TernaryExpr) Condition:C1 QUESTIONMARK Expr:E2 COLON Expr:E3 {: RESULT=new TernaryExpr(C1, E2, E3); RESULT.setLine(C1left); :};
+
+/*
+						Expr ::= (Expr)  AddopTermList
+								 |
+								 (Expr_ternaryCondition) Condition QUESTIONMARK Expr COLON Expr
+								 ;
+*/
 		 
 AddopTermList ::= 	(AddopTermList_add) AddopTermList:A1 Addop:A2 Term:T3 {: RESULT=new AddopTermList_add(A1, A2, T3); RESULT.setLine(A1left); :}
 					|

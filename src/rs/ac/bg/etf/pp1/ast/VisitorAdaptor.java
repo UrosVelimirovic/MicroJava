@@ -1,12 +1,13 @@
 // generated with ast extension for cup
 // version 0.8
-// 2/1/2026 21:45:3
+// 2/1/2026 22:14:1
 
 
-package src.rs.ac.bg.etf.pp1.ast;
+package rs.ac.bg.etf.pp1.ast;
 
 public abstract class VisitorAdaptor implements Visitor { 
 
+    public void visit(ForInit ForInit) { }
     public void visit(EnumDecl EnumDecl) { }
     public void visit(Mulop Mulop) { }
     public void visit(Constant Constant) { }
@@ -17,6 +18,7 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(Unary Unary) { }
     public void visit(StatementList StatementList) { }
     public void visit(Addop Addop) { }
+    public void visit(ForCondition ForCondition) { }
     public void visit(CondFactList CondFactList) { }
     public void visit(ConstVarEnumList ConstVarEnumList) { }
     public void visit(Designator Designator) { }
@@ -32,6 +34,7 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(ConstDeclMore ConstDeclMore) { }
     public void visit(ActParsMore ActParsMore) { }
     public void visit(DesignatorStatement DesignatorStatement) { }
+    public void visit(ForStep ForStep) { }
     public void visit(Statement Statement) { }
     public void visit(VarDecl VarDecl) { }
     public void visit(VarDeclMore VarDeclMore) { }
@@ -92,11 +95,11 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(CondTermList_or CondTermList_or) { visit(); }
     public void visit(Condition Condition) { visit(); }
     public void visit(ForStep_epsilon ForStep_epsilon) { visit(); }
-    public void visit(ForStep ForStep) { visit(); }
+    public void visit(ForStep_DesignatorStatement ForStep_DesignatorStatement) { visit(); }
     public void visit(ForCondition_epsilon ForCondition_epsilon) { visit(); }
-    public void visit(ForCondition ForCondition) { visit(); }
+    public void visit(ForCondition_Condition ForCondition_Condition) { visit(); }
     public void visit(ForInit_epsilon ForInit_epsilon) { visit(); }
-    public void visit(ForInit ForInit) { visit(); }
+    public void visit(ForInit_DesignatorStatement ForInit_DesignatorStatement) { visit(); }
     public void visit(CaseClause CaseClause) { visit(); }
     public void visit(CaseList_epsilon CaseList_epsilon) { visit(); }
     public void visit(CaseList_recursive CaseList_recursive) { visit(); }

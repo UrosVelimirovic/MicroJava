@@ -1,28 +1,15 @@
 // generated with ast extension for cup
 // version 0.8
-// 2/1/2026 21:45:3
+// 2/1/2026 22:14:1
 
 
-package src.rs.ac.bg.etf.pp1.ast;
+package rs.ac.bg.etf.pp1.ast;
 
-public class ForStep implements SyntaxNode {
+public abstract class ForStep implements SyntaxNode {
 
     private SyntaxNode parent;
+
     private int line;
-    private DesignatorStatement DesignatorStatement;
-
-    public ForStep (DesignatorStatement DesignatorStatement) {
-        this.DesignatorStatement=DesignatorStatement;
-        if(DesignatorStatement!=null) DesignatorStatement.setParent(this);
-    }
-
-    public DesignatorStatement getDesignatorStatement() {
-        return DesignatorStatement;
-    }
-
-    public void setDesignatorStatement(DesignatorStatement DesignatorStatement) {
-        this.DesignatorStatement=DesignatorStatement;
-    }
 
     public SyntaxNode getParent() {
         return parent;
@@ -40,37 +27,11 @@ public class ForStep implements SyntaxNode {
         this.line=line;
     }
 
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
+    public abstract void accept(Visitor visitor);
+    public abstract void childrenAccept(Visitor visitor);
+    public abstract void traverseTopDown(Visitor visitor);
+    public abstract void traverseBottomUp(Visitor visitor);
 
-    public void childrenAccept(Visitor visitor) {
-        if(DesignatorStatement!=null) DesignatorStatement.accept(visitor);
-    }
-
-    public void traverseTopDown(Visitor visitor) {
-        accept(visitor);
-        if(DesignatorStatement!=null) DesignatorStatement.traverseTopDown(visitor);
-    }
-
-    public void traverseBottomUp(Visitor visitor) {
-        if(DesignatorStatement!=null) DesignatorStatement.traverseBottomUp(visitor);
-        accept(visitor);
-    }
-
-    public String toString(String tab) {
-        StringBuffer buffer=new StringBuffer();
-        buffer.append(tab);
-        buffer.append("ForStep(\n");
-
-        if(DesignatorStatement!=null)
-            buffer.append(DesignatorStatement.toString("  "+tab));
-        else
-            buffer.append(tab+"  null");
-        buffer.append("\n");
-
-        buffer.append(tab);
-        buffer.append(") [ForStep]");
-        return buffer.toString();
-    }
+    public String toString() { return toString(""); }
+    public abstract String toString(String tab);
 }
