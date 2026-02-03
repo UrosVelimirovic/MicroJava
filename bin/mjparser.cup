@@ -231,7 +231,7 @@ VarDeclMore ::= (VarDeclMore_comma) COMMA VarDecl VarDeclMore
 
 /* EnumDecl = "enum" ident "{" ident ["=" numConst] {"," ident ["=" numConst]} "}" */
 
-EnumDeclList ::= (EnumDeclList) ENUM IDENT LBRACE EnumDecl EnumDeclMore SEMICOLON;
+EnumDeclList ::= (EnumDeclList) ENUM IDENT LBRACE EnumDecl EnumDeclMore RBRACE;
 
 EnumDecl ::= (EnumDecl_var) IDENT
 			 |
