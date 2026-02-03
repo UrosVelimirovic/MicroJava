@@ -352,7 +352,7 @@ CaseList ::= (CaseList_recursive) CaseList:C1 CaseClause:C2 {: RESULT=new CaseLi
 			 (CaseList_epsilon) {: RESULT=new CaseList_epsilon(); :} /* epsilon */
 			 ;
 
-CaseClause ::= (CaseClause) CASE NUMBER:N1 COLON Statement:S2 {: RESULT=new CaseClause(N1, S2); RESULT.setLine(N1left); :};
+CaseClause ::= (CaseClause) CASE NUMBER:N1 COLON StatementList:S2 {: RESULT=new CaseClause(N1, S2); RESULT.setLine(N1left); :};
 			   
 /*----------------------------------------------------------------------------------------------------------------*/
 

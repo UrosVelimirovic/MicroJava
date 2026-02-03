@@ -1,0 +1,124 @@
+program Prog
+
+const int CI = 3;
+const bool CB = true;
+
+enum Tip  { NULA, JEDAN, PET = 5, DESET = 10 }
+enum Tip2 { GAS, JEDAN, PET = 5, DESET = 10 }
+
+Tip e1, e2;
+int i1, i2;
+bool b1;
+
+{
+    // =========================
+    // FUNKCIJE
+    // =========================
+
+    Tip vratiEnum() {
+        return Tip.PET;
+    }
+
+    int vratiInt() {
+        return 7;
+    }
+
+    int primiInt(int x) {
+        return x + 1;
+    }
+
+    Tip primiEnum(Tip x) {
+        return x;
+    }
+
+    // =========================
+    // MAIN
+    // =========================
+
+    void main()
+    int arrInt[];
+    Tip arrEnum[];
+    {
+        // =========================
+        // DODELA
+        // =========================
+
+        e1 = Tip.JEDAN;          // OK
+        e1 = e1;                 // OK
+        e2 = Tip.DESET;          // OK
+
+        i1 = 5;                  // OK
+        i1 = Tip.JEDAN;          // OK (enum → int)
+        i1 = e1;                 // OK (enum var → int)
+
+        // e1 = i1;               // ERROR (int → enum)
+        // e1 = vratiInt();       // ERROR
+        e1 = vratiEnum();        // OK
+
+        // =========================
+        // ARITMETIKA
+        // =========================
+
+        i1 = Tip.JEDAN + 2;          // OK
+        i1 = Tip.JEDAN * Tip.PET;    // OK
+        i1 = Tip.DESET + Tip2.PET;   // OK
+
+        i1 = i1 + Tip.JEDAN;         // OK
+        i1 = 2 * Tip.PET + 3;        // OK
+
+        i1 = e1 + 1;                 // OK
+        i1 = e1 * e2;                // OK
+
+        // e1 = Tip.JEDAN + 1;        // ERROR (int → enum)
+
+        // =========================
+        // FUNKCIJSKI POZIVI
+        // =========================
+
+        i1 = primiInt(Tip.JEDAN);    // OK (enum → int)
+        i1 = primiInt(e1);           // OK
+
+        // primiEnum(1);              // ERROR (int → enum)
+        primiEnum(Tip.JEDAN);        // OK
+        primiEnum(e1);               // OK
+
+        i1 = vratiEnum();            // OK (enum → int)
+        e1 = vratiEnum();            // OK
+
+        i1 = vratiEnum() + 3;        // OK
+        i1 = primiInt(vratiEnum());  // OK
+
+        // =========================
+        // NIZOVI
+        // =========================
+
+        arrInt = new int[Tip.PET];     // OK
+        arrEnum = new Tip[Tip2.PET];   // OK
+
+        arrInt[Tip.JEDAN] = 5;         // OK
+        arrInt[Tip.PET + 2] = 1;       // OK
+        arrInt[e1] = 3;                // OK (enum → int)
+
+        arrEnum[1] = Tip.JEDAN;        // OK
+        arrEnum[Tip.JEDAN] = Tip.NULA; // OK
+
+        // arrEnum[1] = 1;              // ERROR (int → enum)
+
+        // =========================
+        // POREĐENJA
+        // =========================
+
+        //b1 = Tip.JEDAN == Tip.DESET;   // OK
+        //b1 = Tip.JEDAN == Tip2.JEDAN;  // OK (int vrednosti)
+
+        //b1 = e1 == Tip.JEDAN;          // OK
+        //b1 = e1 == e2;                 // OK
+
+        // =========================
+        // KOMPLEKSNI IZRAZI
+        // =========================
+
+        i2 = (Tip2.PET + Tip.PET) * 2 + 3 * Tip.DESET; // OK
+        i2 = (Tip.PET + e1) * 2;                       // OK
+    }
+}

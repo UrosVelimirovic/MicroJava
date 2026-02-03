@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 3/1/2026 19:47:20
+// 3/1/2026 22:1:0
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -10,12 +10,12 @@ public class CaseClause implements SyntaxNode {
     private SyntaxNode parent;
     private int line;
     private Integer N1;
-    private Statement Statement;
+    private StatementList StatementList;
 
-    public CaseClause (Integer N1, Statement Statement) {
+    public CaseClause (Integer N1, StatementList StatementList) {
         this.N1=N1;
-        this.Statement=Statement;
-        if(Statement!=null) Statement.setParent(this);
+        this.StatementList=StatementList;
+        if(StatementList!=null) StatementList.setParent(this);
     }
 
     public Integer getN1() {
@@ -26,12 +26,12 @@ public class CaseClause implements SyntaxNode {
         this.N1=N1;
     }
 
-    public Statement getStatement() {
-        return Statement;
+    public StatementList getStatementList() {
+        return StatementList;
     }
 
-    public void setStatement(Statement Statement) {
-        this.Statement=Statement;
+    public void setStatementList(StatementList StatementList) {
+        this.StatementList=StatementList;
     }
 
     public SyntaxNode getParent() {
@@ -55,16 +55,16 @@ public class CaseClause implements SyntaxNode {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(Statement!=null) Statement.accept(visitor);
+        if(StatementList!=null) StatementList.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(Statement!=null) Statement.traverseTopDown(visitor);
+        if(StatementList!=null) StatementList.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(Statement!=null) Statement.traverseBottomUp(visitor);
+        if(StatementList!=null) StatementList.traverseBottomUp(visitor);
         accept(visitor);
     }
 
@@ -76,8 +76,8 @@ public class CaseClause implements SyntaxNode {
         buffer.append(" "+tab+N1);
         buffer.append("\n");
 
-        if(Statement!=null)
-            buffer.append(Statement.toString("  "+tab));
+        if(StatementList!=null)
+            buffer.append(StatementList.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

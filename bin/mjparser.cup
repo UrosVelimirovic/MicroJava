@@ -352,7 +352,7 @@ CaseList ::= (CaseList_recursive) CaseList CaseClause
 			 (CaseList_epsilon) /* epsilon */
 			 ;
 
-CaseClause ::= (CaseClause) CASE NUMBER COLON Statement;
+CaseClause ::= (CaseClause) CASE NUMBER COLON StatementList;
 			   
 /*----------------------------------------------------------------------------------------------------------------*/
 
