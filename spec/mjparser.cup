@@ -111,6 +111,7 @@ terminal Character CHARACTER;
 /*----------------------------------------------------------------------------------------------------------------*/
 
 nonterminal Program;
+nonterminal ProgramName;
 nonterminal ConstVarEnumList;
 nonterminal MethodDeclList;
 nonterminal ConstDeclList;
@@ -176,7 +177,9 @@ precedence left ELSE;
 
 /* Program = "program" ident {ConstDecl | VarDecl | EnumDecl } "{" {MethodDecl} "}" */
 
-Program ::= (Program) PROG IDENT ConstVarEnumList LBRACE MethodDeclList RBRACE;
+Program ::= (Program) PROG ProgramName ConstVarEnumList LBRACE MethodDeclList RBRACE;
+
+ProgramName ::= (ProgramName) IDENT;
 
 /*----------------------------------------------------------------------------------------------------------------*/
 

@@ -111,6 +111,7 @@ terminal Character CHARACTER;
 /*----------------------------------------------------------------------------------------------------------------*/
 
 nonterminal Program Program;
+nonterminal ProgramName ProgramName;
 nonterminal ConstVarEnumList ConstVarEnumList;
 nonterminal MethodDeclList MethodDeclList;
 nonterminal ConstDeclList ConstDeclList;
@@ -176,7 +177,9 @@ precedence left ELSE;
 
 /* Program = "program" ident {ConstDecl | VarDecl | EnumDecl } "{" {MethodDecl} "}" */
 
-Program ::= (Program) PROG IDENT:I1 ConstVarEnumList:C2 LBRACE MethodDeclList:M3 RBRACE {: RESULT=new Program(I1, C2, M3); RESULT.setLine(I1left); :};
+Program ::= (Program) PROG ProgramName:P1 ConstVarEnumList:C2 LBRACE MethodDeclList:M3 RBRACE {: RESULT=new Program(P1, C2, M3); RESULT.setLine(P1left); :};
+
+ProgramName ::= (ProgramName) IDENT:I1 {: RESULT=new ProgramName(I1); RESULT.setLine(I1left); :};
 
 /*----------------------------------------------------------------------------------------------------------------*/
 
@@ -563,6 +566,9 @@ Mulop ::= (Mulop_mul) MUL {: RESULT=new Mulop_mul(); :}
 		  ;
 		  
 /*----------------------------------------------------------------------------------------------------------------*/
+
+
+
 
 
 

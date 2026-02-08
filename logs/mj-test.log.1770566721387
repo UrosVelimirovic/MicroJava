@@ -1,0 +1,36 @@
+INFO  17:04:24,019 - Compiling source file: /Users/uvelimirovic/eclipse-workspace/MJCompiler/test/program.mj
+INFO  17:04:24,028 - #2 program
+INFO  17:04:24,028 - #45 test302
+INFO  17:04:24,028 - #43 {
+INFO  17:04:24,028 - #11 void
+INFO  17:04:24,028 - #45 main
+INFO  17:04:24,028 - #39 (
+INFO  17:04:24,028 - #40 )
+INFO  17:04:24,028 - #43 {
+INFO  17:04:24,028 - #44 }
+INFO  17:04:24,028 - #44 }
+INFO  17:04:24,029 - Program(
+  ProgramName(
+   test302
+  ) [ProgramName]
+  ConstVarEnumList_epsilon(
+  ) [ConstVarEnumList_epsilon]
+  MethodDeclList_rec(
+    MethodDeclList_epsilon(
+    ) [MethodDeclList_epsilon]
+    MethodDecl(
+      MethodReturnTypeAndName_void(
+       main
+      ) [MethodReturnTypeAndName_void]
+      FormParsList_epsilon(
+      ) [FormParsList_epsilon]
+      VarDeclListRec_epsilon(
+      ) [VarDeclListRec_epsilon]
+      StatementList_epsilon(
+      ) [StatementList_epsilon]
+    ) [MethodDecl]
+  ) [MethodDeclList_rec]
+) [Program]
+INFO  17:04:24,029 - =====================================================================
+INFO  17:04:24,030 - =====================================================================
+INFO  17:04:24,031 - Parsiranje uspesno zavrseno!

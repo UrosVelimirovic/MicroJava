@@ -2,6 +2,8 @@
 
 program test302
 
+const int i =3;
+
 {
 	void main()
 	{
