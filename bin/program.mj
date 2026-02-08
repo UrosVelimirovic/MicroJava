@@ -2,10 +2,11 @@
 
 program test302
 
-const int i = true;
+const int i = 2, pi = 4;
+int x, y, z, w, s, a, d;
 
 {
-	void main()
+	void maisn() int c, b[];
 	{
 	}
 }
