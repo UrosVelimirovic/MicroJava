@@ -123,7 +123,7 @@ public class SemAnalyzer extends VisitorAdaptor {
 		}
 		else {
 			report_error("Dvostruka definicija promenljive: " + varDecl_var.getI1(), varDecl_var);
-		}
+		}	
 	}
 	
 	@Override
@@ -170,6 +170,45 @@ public class SemAnalyzer extends VisitorAdaptor {
 	
 /*----------------------------------------------------------------------------------------------------------------*/
 	
+	/* FORMPAR DECLARATIONS */
+	@Override
+	public void visit(FormPars_var formPars_var) {
+		Obj varObj = null;
+		if(currentMethod == null)
+			report_error("Semanticka greska. [FormPars_var]", formPars_var);
+		else
+			varObj = Tab.currentScope().findSymbol(formPars_var.getI2());
+		
+		if(varObj == null || varObj == Tab.noObj) {
+			varObj = Tab.insert(Obj.Var, formPars_var.getI2(), currentType);
+			varObj.setFpPos(1);
+			currentMethod.setLevel(currentMethod.getLevel() + 1);
+		}
+		else{
+			report_error("Dvostruka definicija formalnog parametra: " + formPars_var.getI2(), formPars_var);
+		}
+	}
+	
+	@Override
+	public void visit(FormPars_array formPars_array) {
+		Obj varObj = null;
+		if(currentMethod == null)
+			report_error("Semanticka greska. [FormPars_array]", formPars_array);
+		else
+			varObj = Tab.currentScope().findSymbol(formPars_array.getI2());
+		
+		if(varObj == null || varObj == Tab.noObj) {
+			varObj = Tab.insert(Obj.Var, formPars_array.getI2(), new Struct(Struct.Array, currentType));
+			varObj.setFpPos(1);
+			currentMethod.setLevel(currentMethod.getLevel() + 1);
+		}
+		else{
+			report_error("Dvostruka definicija formalnog parametra(niza): " + formPars_array.getI2(), formPars_array);
+		}
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------*/
+
 	@Override
 	public void visit(Type type) {
 		Obj typeObj = Tab.find(type.getI1());

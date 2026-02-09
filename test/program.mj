@@ -6,7 +6,10 @@ const int i = 2, pi = 4;
 int x, y, z, w, s, a, d;
 
 {
-	void maisn() int c, b[];
+
+	int getValue(int a, int k) int b; bool c;
+	{}
+	void main()
 	{
 	}
 }
