@@ -125,6 +125,7 @@ nonterminal VarDecl;
 nonterminal VarDeclMore;
 nonterminal EnumDecl;
 nonterminal EnumDeclMore;
+nonterminal EnumName;
 nonterminal MethodDecl;
 nonterminal MethodReturnTypeAndName;
 nonterminal VarDeclListInMethod;
@@ -234,7 +235,9 @@ VarDeclMore ::= (VarDeclMore_comma) COMMA VarDecl VarDeclMore
 
 /* EnumDecl = "enum" ident "{" ident ["=" numConst] {"," ident ["=" numConst]} "}" */
 
-EnumDeclList ::= (EnumDeclList) ENUM IDENT LBRACE EnumDecl EnumDeclMore RBRACE;
+EnumDeclList ::= (EnumDeclList) ENUM EnumName LBRACE EnumDecl EnumDeclMore RBRACE;
+
+EnumName ::= (EnumName) IDENT;
 
 EnumDecl ::= (EnumDecl_var) IDENT
 			 |

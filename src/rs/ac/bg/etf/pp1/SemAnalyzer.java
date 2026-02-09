@@ -8,6 +8,8 @@ import rs.ac.bg.etf.pp1.ast.*;
 import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.concepts.Obj;
 import rs.etf.pp1.symboltable.concepts.Struct;
+import java.util.HashSet;
+import java.util.Set;
 
 /*----------------------------------------------------------------------------------------------------------------*/
 
@@ -22,6 +24,11 @@ public class SemAnalyzer extends VisitorAdaptor {
 	private Struct constantType;
 	private Struct boolType = Tab.find("bool").getType();
 	private Obj currentMethod;
+	
+	private Struct currentEnum;
+	private int enumAutoValue = 0;
+	private String currentEnumName;
+    Set<Integer> uniqueValuesInCurrentEnum;
 
 /*----------------------------------------------------------------------------------------------------------------*/
 
@@ -144,6 +151,68 @@ public class SemAnalyzer extends VisitorAdaptor {
 	
 /*----------------------------------------------------------------------------------------------------------------*/
 
+	/* ENUM DECLARATIONS */
+	
+	@Override
+	public void visit(EnumDeclList enumDeclList) {
+		Tab.chainLocalSymbols(currentEnum);
+		Tab.closeScope();
+		
+		currentEnum = null;
+		enumAutoValue = 0;
+		currentEnumName = null;
+	    uniqueValuesInCurrentEnum.clear();
+	}
+	
+	@Override
+	public void visit(EnumName enumName) {
+		Obj enumObj = Tab.find(enumName.getI1());
+		if(enumObj != Tab.noObj) {
+			report_error("Dvostruka definicija nabrajanja: " + enumName.getI1(), enumName);
+		}
+		else {
+			currentEnum = new Struct(Struct.Enum);
+			currentEnumName = enumName.getI1();
+			if(uniqueValuesInCurrentEnum == null)
+				uniqueValuesInCurrentEnum = new HashSet<>();
+			
+			enumObj = Tab.insert(Obj.Type, enumName.getI1(), currentEnum);
+			Tab.openScope();
+		}
+	}
+	
+	@Override
+	public void visit(EnumDecl_var enumDecl_var) {
+		Obj enumConstObj = Tab.currentScope().findSymbol(enumDecl_var.getI1());
+		if(enumConstObj != Tab.noObj && enumConstObj != null)
+			report_error("Dvostruka definicija konstante: " + enumDecl_var.getI1() + " za nabrajanje: " + currentEnumName, enumDecl_var);
+		else if(uniqueValuesInCurrentEnum.contains(enumAutoValue))
+			report_error("Konstanta nabrajanja sa vrednoscu " + enumAutoValue + " unutar nabrajanja " + currentEnumName + " vec postoji", enumDecl_var);
+		else {
+			enumConstObj = Tab.insert(Obj.Con, enumDecl_var.getI1(), Tab.intType);
+			enumConstObj.setAdr(enumAutoValue);
+			uniqueValuesInCurrentEnum.add(enumAutoValue);
+			enumAutoValue++;
+		}
+	}
+	
+	@Override
+	public void visit(EnumDecl_equal enumDecl_equal) {
+		Obj enumConstObj = Tab.currentScope().findSymbol(enumDecl_equal.getI1());
+		if(enumConstObj != Tab.noObj && enumConstObj != null)
+			report_error("Dvostruka definicija konstante: " + enumDecl_equal.getI1() + " za nabrajanje: " + currentEnumName, enumDecl_equal);
+		else if(uniqueValuesInCurrentEnum.contains(enumDecl_equal.getN2()))
+			report_error("Konstanta nabrajanja sa vrednoscu " + (enumDecl_equal.getN2()) + " unutar nabrajanja " + currentEnumName + " vec postoji", enumDecl_equal);
+		else {
+			enumConstObj = Tab.insert(Obj.Con, enumDecl_equal.getI1(), Tab.intType);
+			enumConstObj.setAdr(enumDecl_equal.getN2());
+			uniqueValuesInCurrentEnum.add(enumDecl_equal.getN2());
+			enumAutoValue = enumDecl_equal.getN2();
+		}
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------*/
+
 	/* METHOD DECLARATIONS */
 	
 	@Override
@@ -171,6 +240,7 @@ public class SemAnalyzer extends VisitorAdaptor {
 /*----------------------------------------------------------------------------------------------------------------*/
 	
 	/* FORMPAR DECLARATIONS */
+	
 	@Override
 	public void visit(FormPars_var formPars_var) {
 		Obj varObj = null;

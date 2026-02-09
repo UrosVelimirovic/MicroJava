@@ -125,6 +125,7 @@ nonterminal VarDecl VarDecl;
 nonterminal VarDeclMore VarDeclMore;
 nonterminal EnumDecl EnumDecl;
 nonterminal EnumDeclMore EnumDeclMore;
+nonterminal EnumName EnumName;
 nonterminal MethodDecl MethodDecl;
 nonterminal MethodReturnTypeAndName MethodReturnTypeAndName;
 nonterminal VarDeclListInMethod VarDeclListInMethod;
@@ -234,7 +235,9 @@ VarDeclMore ::= (VarDeclMore_comma) COMMA VarDecl:V1 VarDeclMore:V2 {: RESULT=ne
 
 /* EnumDecl = "enum" ident "{" ident ["=" numConst] {"," ident ["=" numConst]} "}" */
 
-EnumDeclList ::= (EnumDeclList) ENUM IDENT:I1 LBRACE EnumDecl:E2 EnumDeclMore:E3 RBRACE {: RESULT=new EnumDeclList(I1, E2, E3); RESULT.setLine(I1left); :};
+EnumDeclList ::= (EnumDeclList) ENUM EnumName:E1 LBRACE EnumDecl:E2 EnumDeclMore:E3 RBRACE {: RESULT=new EnumDeclList(E1, E2, E3); RESULT.setLine(E1left); :};
+
+EnumName ::= (EnumName) IDENT:I1 {: RESULT=new EnumName(I1); RESULT.setLine(I1left); :};
 
 EnumDecl ::= (EnumDecl_var) IDENT:I1 {: RESULT=new EnumDecl_var(I1); RESULT.setLine(I1left); :}
 			 |

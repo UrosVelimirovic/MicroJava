@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 8/1/2026 17:1:41
+// 9/1/2026 21:45:44
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -9,24 +9,25 @@ public class EnumDeclList implements SyntaxNode {
 
     private SyntaxNode parent;
     private int line;
-    private String I1;
+    private EnumName EnumName;
     private EnumDecl EnumDecl;
     private EnumDeclMore EnumDeclMore;
 
-    public EnumDeclList (String I1, EnumDecl EnumDecl, EnumDeclMore EnumDeclMore) {
-        this.I1=I1;
+    public EnumDeclList (EnumName EnumName, EnumDecl EnumDecl, EnumDeclMore EnumDeclMore) {
+        this.EnumName=EnumName;
+        if(EnumName!=null) EnumName.setParent(this);
         this.EnumDecl=EnumDecl;
         if(EnumDecl!=null) EnumDecl.setParent(this);
         this.EnumDeclMore=EnumDeclMore;
         if(EnumDeclMore!=null) EnumDeclMore.setParent(this);
     }
 
-    public String getI1() {
-        return I1;
+    public EnumName getEnumName() {
+        return EnumName;
     }
 
-    public void setI1(String I1) {
-        this.I1=I1;
+    public void setEnumName(EnumName EnumName) {
+        this.EnumName=EnumName;
     }
 
     public EnumDecl getEnumDecl() {
@@ -66,17 +67,20 @@ public class EnumDeclList implements SyntaxNode {
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(EnumName!=null) EnumName.accept(visitor);
         if(EnumDecl!=null) EnumDecl.accept(visitor);
         if(EnumDeclMore!=null) EnumDeclMore.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(EnumName!=null) EnumName.traverseTopDown(visitor);
         if(EnumDecl!=null) EnumDecl.traverseTopDown(visitor);
         if(EnumDeclMore!=null) EnumDeclMore.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(EnumName!=null) EnumName.traverseBottomUp(visitor);
         if(EnumDecl!=null) EnumDecl.traverseBottomUp(visitor);
         if(EnumDeclMore!=null) EnumDeclMore.traverseBottomUp(visitor);
         accept(visitor);
@@ -87,7 +91,10 @@ public class EnumDeclList implements SyntaxNode {
         buffer.append(tab);
         buffer.append("EnumDeclList(\n");
 
-        buffer.append(" "+tab+I1);
+        if(EnumName!=null)
+            buffer.append(EnumName.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         if(EnumDecl!=null)

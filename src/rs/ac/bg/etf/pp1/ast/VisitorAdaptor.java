@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 8/1/2026 17:1:41
+// 9/1/2026 21:45:44
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -139,6 +139,7 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(EnumDeclMore_comma EnumDeclMore_comma) { visit(); }
     public void visit(EnumDecl_equal EnumDecl_equal) { visit(); }
     public void visit(EnumDecl_var EnumDecl_var) { visit(); }
+    public void visit(EnumName EnumName) { visit(); }
     public void visit(EnumDeclList EnumDeclList) { visit(); }
     public void visit(VarDeclMore_epsilon VarDeclMore_epsilon) { visit(); }
     public void visit(VarDeclMore_comma VarDeclMore_comma) { visit(); }

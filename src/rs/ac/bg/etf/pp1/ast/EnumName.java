@@ -5,23 +5,22 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class ActPars implements SyntaxNode {
+public class EnumName implements SyntaxNode {
 
     private SyntaxNode parent;
     private int line;
-    private Expr Expr;
+    private String I1;
 
-    public ActPars (Expr Expr) {
-        this.Expr=Expr;
-        if(Expr!=null) Expr.setParent(this);
+    public EnumName (String I1) {
+        this.I1=I1;
     }
 
-    public Expr getExpr() {
-        return Expr;
+    public String getI1() {
+        return I1;
     }
 
-    public void setExpr(Expr Expr) {
-        this.Expr=Expr;
+    public void setI1(String I1) {
+        this.I1=I1;
     }
 
     public SyntaxNode getParent() {
@@ -45,32 +44,26 @@ public class ActPars implements SyntaxNode {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(Expr!=null) Expr.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(Expr!=null) Expr.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(Expr!=null) Expr.traverseBottomUp(visitor);
         accept(visitor);
     }
 
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("ActPars(\n");
+        buffer.append("EnumName(\n");
 
-        if(Expr!=null)
-            buffer.append(Expr.toString("  "+tab));
-        else
-            buffer.append(tab+"  null");
+        buffer.append(" "+tab+I1);
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [ActPars]");
+        buffer.append(") [EnumName]");
         return buffer.toString();
     }
 }

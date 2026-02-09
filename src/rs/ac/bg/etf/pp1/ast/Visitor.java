@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 8/1/2026 17:1:41
+// 9/1/2026 21:45:44
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -139,6 +139,7 @@ public interface Visitor {
     public void visit(EnumDeclMore_comma EnumDeclMore_comma);
     public void visit(EnumDecl_equal EnumDecl_equal);
     public void visit(EnumDecl_var EnumDecl_var);
+    public void visit(EnumName EnumName);
     public void visit(EnumDeclList EnumDeclList);
     public void visit(VarDeclMore_epsilon VarDeclMore_epsilon);
     public void visit(VarDeclMore_comma VarDeclMore_comma);
