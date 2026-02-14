@@ -1,15 +1,19 @@
 // generated with ast extension for cup
 // version 0.8
-// 9/1/2026 21:45:44
+// 14/1/2026 18:33:47
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class Designator_1and3 extends Designator {
+public class DesignatorArrayName implements SyntaxNode {
+
+    private SyntaxNode parent;
+    private int line;
+    public rs.etf.pp1.symboltable.concepts.Obj obj = null;
 
     private String I1;
 
-    public Designator_1and3 (String I1) {
+    public DesignatorArrayName (String I1) {
         this.I1=I1;
     }
 
@@ -19,6 +23,22 @@ public class Designator_1and3 extends Designator {
 
     public void setI1(String I1) {
         this.I1=I1;
+    }
+
+    public SyntaxNode getParent() {
+        return parent;
+    }
+
+    public void setParent(SyntaxNode parent) {
+        this.parent=parent;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public void setLine(int line) {
+        this.line=line;
     }
 
     public void accept(Visitor visitor) {
@@ -39,13 +59,13 @@ public class Designator_1and3 extends Designator {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("Designator_1and3(\n");
+        buffer.append("DesignatorArrayName(\n");
 
         buffer.append(" "+tab+I1);
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [Designator_1and3]");
+        buffer.append(") [DesignatorArrayName]");
         return buffer.toString();
     }
 }

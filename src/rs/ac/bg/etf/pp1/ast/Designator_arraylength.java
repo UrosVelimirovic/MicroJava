@@ -5,20 +5,20 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class FactorSub_c extends FactorSub {
+public class Designator_arraylength extends Designator {
 
-    private Character C1;
+    private String I1;
 
-    public FactorSub_c (Character C1) {
-        this.C1=C1;
+    public Designator_arraylength (String I1) {
+        this.I1=I1;
     }
 
-    public Character getC1() {
-        return C1;
+    public String getI1() {
+        return I1;
     }
 
-    public void setC1(Character C1) {
-        this.C1=C1;
+    public void setI1(String I1) {
+        this.I1=I1;
     }
 
     public void accept(Visitor visitor) {
@@ -39,13 +39,13 @@ public class FactorSub_c extends FactorSub {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("FactorSub_c(\n");
+        buffer.append("Designator_arraylength(\n");
 
-        buffer.append(" "+tab+C1);
+        buffer.append(" "+tab+I1);
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [FactorSub_c]");
+        buffer.append(") [Designator_arraylength]");
         return buffer.toString();
     }
 }

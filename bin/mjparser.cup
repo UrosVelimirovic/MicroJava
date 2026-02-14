@@ -148,28 +148,29 @@ nonterminal CondTermList;
 nonterminal CondFact;
 nonterminal CondFactList;
 
-nonterminal Expr;
-nonterminal NonTernaryExpr;
-nonterminal TernaryExpr;
-nonterminal Term;
-nonterminal Factor;
-nonterminal AddopTermList;
-nonterminal MulopFactorList;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Expr;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct NonTernaryExpr;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct TernaryExpr;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Term;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Factor;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct AddopTermList;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct MulopFactorList;
 
 nonterminal Unary;
-nonterminal FactorSub;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct FactorSub;
 
 nonterminal ActParsList;
 nonterminal ActPars;
 nonterminal ActParsMore;
 
 nonterminal DesignatorStatement;
-nonterminal Designator;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Designator;
 
 nonterminal Relop;
 nonterminal Addop;
 nonterminal Mulop;
 
+nonterminal rs.etf.pp1.symboltable.concepts.Obj DesignatorArrayName;
 /*----------------------------------------------------------------------------------------------------------------*/
 
 precedence left ELSE;
@@ -426,21 +427,22 @@ DesignatorStatement ::= (DesignatorStatement_assign) Designator EQUAL Expr
 
 /*
  Vrste:
- 	1 enum
- 	2 enum.ident
- 	3 niz
+    0 varName (includes niz)
+ 	2 enumName.ident
  	4 niz[expr]
  	5 niz.length
 */
 
-Designator ::= 	(Designator_1and3) IDENT /* 1 and 3 */	
+Designator ::= 	(Designator_var) IDENT /* 0 3 */	
 				|
-				(Designator_2) IDENT DOT IDENT	/* 2 */	
+				(Designator_enumdotident) IDENT DOT IDENT	/* 2 */	
 				|
-				(Designator_4) IDENT LBRACKET Expr RBRACKET /* 4 */
+				(Designator_elem) DesignatorArrayName LBRACKET Expr RBRACKET /* 4 */
 				|
-				(Designator_5) IDENT DOT LENGTH	/* 5 */			
+				(Designator_arraylength) IDENT DOT LENGTH	/* 5 */			
 				;
+
+DesignatorArrayName ::= (DesignatorArrayName) IDENT;
 
 /*----------------------------------------------------------------------------------------------------------------*/
 

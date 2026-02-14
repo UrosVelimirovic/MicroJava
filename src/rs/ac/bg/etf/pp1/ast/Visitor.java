@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 9/1/2026 21:45:44
+// 14/1/2026 18:33:47
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -78,10 +78,11 @@ public interface Visitor {
     public void visit(NonTernaryExpr NonTernaryExpr);
     public void visit(Expr_Ternary Expr_Ternary);
     public void visit(Expr_NonTernary Expr_NonTernary);
-    public void visit(Designator_5 Designator_5);
-    public void visit(Designator_4 Designator_4);
-    public void visit(Designator_2 Designator_2);
-    public void visit(Designator_1and3 Designator_1and3);
+    public void visit(DesignatorArrayName DesignatorArrayName);
+    public void visit(Designator_arraylength Designator_arraylength);
+    public void visit(Designator_elem Designator_elem);
+    public void visit(Designator_enumdotident Designator_enumdotident);
+    public void visit(Designator_var Designator_var);
     public void visit(DesignatorStatement_dec DesignatorStatement_dec);
     public void visit(DesignatorStatement_inc DesignatorStatement_inc);
     public void visit(DesignatorStatement_meth DesignatorStatement_meth);

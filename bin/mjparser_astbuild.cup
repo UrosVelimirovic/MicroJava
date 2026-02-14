@@ -148,28 +148,29 @@ nonterminal CondTermList CondTermList;
 nonterminal CondFact CondFact;
 nonterminal CondFactList CondFactList;
 
-nonterminal Expr Expr;
-nonterminal NonTernaryExpr NonTernaryExpr;
-nonterminal TernaryExpr TernaryExpr;
-nonterminal Term Term;
-nonterminal Factor Factor;
-nonterminal AddopTermList AddopTermList;
-nonterminal MulopFactorList MulopFactorList;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Expr;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct NonTernaryExpr;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct TernaryExpr;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Term;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Factor;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct AddopTermList;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct MulopFactorList;
 
 nonterminal Unary Unary;
-nonterminal FactorSub FactorSub;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct FactorSub;
 
 nonterminal ActParsList ActParsList;
 nonterminal ActPars ActPars;
 nonterminal ActParsMore ActParsMore;
 
 nonterminal DesignatorStatement DesignatorStatement;
-nonterminal Designator Designator;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Designator;
 
 nonterminal Relop Relop;
 nonterminal Addop Addop;
 nonterminal Mulop Mulop;
 
+nonterminal rs.etf.pp1.symboltable.concepts.Obj DesignatorArrayName;
 /*----------------------------------------------------------------------------------------------------------------*/
 
 precedence left ELSE;
@@ -426,21 +427,22 @@ DesignatorStatement ::= (DesignatorStatement_assign) Designator:D1 EQUAL Expr:E2
 
 /*
  Vrste:
- 	1 enum
- 	2 enum.ident
- 	3 niz
+    0 varName (includes niz)
+ 	2 enumName.ident
  	4 niz[expr]
  	5 niz.length
 */
 
-Designator ::= 	(Designator_1and3) IDENT:I1 {: RESULT=new Designator_1and3(I1); RESULT.setLine(I1left); :} /* 1 and 3 */	
+Designator ::= 	(Designator_var) IDENT:I1 {: RESULT=new Designator_var(I1); RESULT.setLine(I1left); :} /* 0 3 */	
 				|
-				(Designator_2) IDENT:I1 DOT IDENT:I2 {: RESULT=new Designator_2(I1, I2); RESULT.setLine(I1left); :}	/* 2 */	
+				(Designator_enumdotident) IDENT:I1 DOT IDENT:I2 {: RESULT=new Designator_enumdotident(I1, I2); RESULT.setLine(I1left); :}	/* 2 */	
 				|
-				(Designator_4) IDENT:I1 LBRACKET Expr:E2 RBRACKET {: RESULT=new Designator_4(I1, E2); RESULT.setLine(I1left); :} /* 4 */
+				(Designator_elem) DesignatorArrayName:D1 LBRACKET Expr:E2 RBRACKET {: RESULT=new Designator_elem(D1, E2); RESULT.setLine(D1left); :} /* 4 */
 				|
-				(Designator_5) IDENT:I1 DOT LENGTH {: RESULT=new Designator_5(I1); RESULT.setLine(I1left); :}	/* 5 */			
+				(Designator_arraylength) IDENT:I1 DOT LENGTH {: RESULT=new Designator_arraylength(I1); RESULT.setLine(I1left); :}	/* 5 */			
 				;
+
+DesignatorArrayName ::= (DesignatorArrayName) IDENT:I1 {: RESULT=new DesignatorArrayName(I1); RESULT.setLine(I1left); :};
 
 /*----------------------------------------------------------------------------------------------------------------*/
 

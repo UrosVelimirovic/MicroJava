@@ -1,17 +1,22 @@
 //Test 302
 
 program test302
-
+int a;
 const int i = 2, pi = 4;
-int x, y, z, w, s, a, d;
+int x, y, z, w, s, d;
 bool ssss;
 enum kita {aasd, asdasdasda ,asdasdasdsa}
 kita SSSS;
 {
 
-	int getValue(int asa, int sdasdk) kita ddd[];int b; bool c;
-	{}
+	int getValue(int aaaaaa, int sdasdk) kita ddd[];int b; bool c; bool a;
+	{
+		b = 3 + ddd.length;
+	}
 	void main()
 	{
+		
 	}
+	
+	void b(int b){}
 }
