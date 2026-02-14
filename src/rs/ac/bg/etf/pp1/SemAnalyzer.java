@@ -366,7 +366,7 @@ public class SemAnalyzer extends VisitorAdaptor {
 			designator_arraylength.obj = Tab.noObj;
 		}
 		else {
-			designator_arraylength.obj = arrObj; // TODO
+			designator_arraylength.obj = new Obj(Obj.Con, arrObj.getName() + "[$]", Tab.intType);
 		}
 	}
 	
