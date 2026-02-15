@@ -142,11 +142,11 @@ nonterminal CaseClause CaseClause;
 nonterminal ForInit ForInit;
 nonterminal ForCondition ForCondition;
 nonterminal ForStep ForStep;
-nonterminal Condition Condition;
-nonterminal CondTerm CondTerm;
-nonterminal CondTermList CondTermList;
-nonterminal CondFact CondFact;
-nonterminal CondFactList CondFactList;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Condition;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct CondTerm;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct CondTermList;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct CondFact;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct CondFactList;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Expr;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct NonTernaryExpr;
@@ -171,6 +171,9 @@ nonterminal Addop Addop;
 nonterminal Mulop Mulop;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj DesignatorArrayName;
+
+nonterminal ForNonTerm ForNonTerm;
+nonterminal ActParsListBegin ActParsListBegin;
 /*----------------------------------------------------------------------------------------------------------------*/
 
 precedence left ELSE;
@@ -342,8 +345,10 @@ SingleStatement ::= (SingleStatement_ds) DesignatorStatement:D1 SEMICOLON {: RES
 					|
 					(SingleStatement_switch) SWITCH LPAREN Expr:E1 RPAREN LBRACE CaseList:C2 RBRACE {: RESULT=new SingleStatement_switch(E1, C2); RESULT.setLine(E1left); :}
 					|
-					(SingleStatement_for) FOR LPAREN ForInit:F1 SEMICOLON ForCondition:F2 SEMICOLON ForStep:F3 RPAREN Statement:S4 {: RESULT=new SingleStatement_for(F1, F2, F3, S4); RESULT.setLine(F1left); :}
+					(SingleStatement_for) ForNonTerm:F1 LPAREN ForInit:F2 SEMICOLON ForCondition:F3 SEMICOLON ForStep:F4 RPAREN Statement:S5 {: RESULT=new SingleStatement_for(F1, F2, F3, F4, S5); RESULT.setLine(F1left); :}
 					;
+
+ForNonTerm ::= (ForNonTerm) FOR {: RESULT=new ForNonTerm(); :};
 
 /*----------------------------------------------------------------------------------------------------------------*/
 
@@ -521,10 +526,12 @@ Unary ::= 	(Unary_minus) MINUS {: RESULT=new Unary_minus(); :}
 
 /* ActPars = Expr {"," Expr} */
 
-ActParsList ::= 	(ActParsList_rec) ActPars:A1 ActParsMore:A2 {: RESULT=new ActParsList_rec(A1, A2); RESULT.setLine(A1left); :}
+ActParsList ::= 	(ActParsList_rec) ActParsListBegin:A1 ActPars:A2 ActParsMore:A3 {: RESULT=new ActParsList_rec(A1, A2, A3); RESULT.setLine(A1left); :}
 					|
-					(ActParsList_epsilon) {: RESULT=new ActParsList_epsilon(); :} /* epsilon */
+					(ActParsList_epsilon) ActParsListBegin:A1 {: RESULT=new ActParsList_epsilon(A1); RESULT.setLine(A1left); :}
 					;
+					
+ActParsListBegin ::= (ActParsListBegin) {: RESULT=new ActParsListBegin(); :} /* epsilon */;
 
 ActParsMore ::= 	(ActParsMore_comma) COMMA ActPars:A1 ActParsMore:A2 {: RESULT=new ActParsMore_comma(A1, A2); RESULT.setLine(A1left); :}
 					|

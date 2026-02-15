@@ -108,6 +108,7 @@ terminal Integer NUMBER;
 terminal Integer BOOL;
 terminal Character CHARACTER;
 
+/* TODO: oporavak od greske */
 /*----------------------------------------------------------------------------------------------------------------*/
 
 nonterminal Program;
@@ -142,11 +143,11 @@ nonterminal CaseClause;
 nonterminal ForInit;
 nonterminal ForCondition;
 nonterminal ForStep;
-nonterminal Condition;
-nonterminal CondTerm;
-nonterminal CondTermList;
-nonterminal CondFact;
-nonterminal CondFactList;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Condition;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct CondTerm;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct CondTermList;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct CondFact;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct CondFactList;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Expr;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct NonTernaryExpr;
@@ -171,6 +172,9 @@ nonterminal Addop;
 nonterminal Mulop;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj DesignatorArrayName;
+
+nonterminal ForNonTerm;
+nonterminal ActParsListBegin;
 /*----------------------------------------------------------------------------------------------------------------*/
 
 precedence left ELSE;
@@ -342,8 +346,10 @@ SingleStatement ::= (SingleStatement_ds) DesignatorStatement SEMICOLON
 					|
 					(SingleStatement_switch) SWITCH LPAREN Expr RPAREN LBRACE CaseList RBRACE
 					|
-					(SingleStatement_for) FOR LPAREN ForInit SEMICOLON ForCondition SEMICOLON ForStep RPAREN Statement
+					(SingleStatement_for) ForNonTerm LPAREN ForInit SEMICOLON ForCondition SEMICOLON ForStep RPAREN Statement
 					;
+
+ForNonTerm ::= (ForNonTerm) FOR;
 
 /*----------------------------------------------------------------------------------------------------------------*/
 
@@ -521,10 +527,12 @@ Unary ::= 	(Unary_minus) MINUS
 
 /* ActPars = Expr {"," Expr} */
 
-ActParsList ::= 	(ActParsList_rec) ActPars ActParsMore
+ActParsList ::= 	(ActParsList_rec) ActParsListBegin ActPars ActParsMore
 					|
-					(ActParsList_epsilon) /* epsilon */
+					(ActParsList_epsilon) ActParsListBegin
 					;
+					
+ActParsListBegin ::= (ActParsListBegin) /* epsilon */;
 
 ActParsMore ::= 	(ActParsMore_comma) COMMA ActPars ActParsMore
 					|

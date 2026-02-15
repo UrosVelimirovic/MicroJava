@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 14/1/2026 18:33:47
+// 15/1/2026 21:53:56
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -57,6 +57,7 @@ public interface Visitor {
     public void visit(ActPars ActPars);
     public void visit(ActParsMore_epsilon ActParsMore_epsilon);
     public void visit(ActParsMore_comma ActParsMore_comma);
+    public void visit(ActParsListBegin ActParsListBegin);
     public void visit(ActParsList_epsilon ActParsList_epsilon);
     public void visit(ActParsList_rec ActParsList_rec);
     public void visit(Unary_epsilon Unary_epsilon);
@@ -106,6 +107,7 @@ public interface Visitor {
     public void visit(CaseList_recursive CaseList_recursive);
     public void visit(ElseStatement_no ElseStatement_no);
     public void visit(ElseStatement_yes ElseStatement_yes);
+    public void visit(ForNonTerm ForNonTerm);
     public void visit(SingleStatement_for SingleStatement_for);
     public void visit(SingleStatement_switch SingleStatement_switch);
     public void visit(SingleStatement_print2 SingleStatement_print2);

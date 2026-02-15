@@ -1,18 +1,21 @@
 // generated with ast extension for cup
 // version 0.8
-// 14/1/2026 18:33:47
+// 15/1/2026 21:53:56
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class SingleStatement_for extends SingleStatement {
 
+    private ForNonTerm ForNonTerm;
     private ForInit ForInit;
     private ForCondition ForCondition;
     private ForStep ForStep;
     private Statement Statement;
 
-    public SingleStatement_for (ForInit ForInit, ForCondition ForCondition, ForStep ForStep, Statement Statement) {
+    public SingleStatement_for (ForNonTerm ForNonTerm, ForInit ForInit, ForCondition ForCondition, ForStep ForStep, Statement Statement) {
+        this.ForNonTerm=ForNonTerm;
+        if(ForNonTerm!=null) ForNonTerm.setParent(this);
         this.ForInit=ForInit;
         if(ForInit!=null) ForInit.setParent(this);
         this.ForCondition=ForCondition;
@@ -21,6 +24,14 @@ public class SingleStatement_for extends SingleStatement {
         if(ForStep!=null) ForStep.setParent(this);
         this.Statement=Statement;
         if(Statement!=null) Statement.setParent(this);
+    }
+
+    public ForNonTerm getForNonTerm() {
+        return ForNonTerm;
+    }
+
+    public void setForNonTerm(ForNonTerm ForNonTerm) {
+        this.ForNonTerm=ForNonTerm;
     }
 
     public ForInit getForInit() {
@@ -60,6 +71,7 @@ public class SingleStatement_for extends SingleStatement {
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(ForNonTerm!=null) ForNonTerm.accept(visitor);
         if(ForInit!=null) ForInit.accept(visitor);
         if(ForCondition!=null) ForCondition.accept(visitor);
         if(ForStep!=null) ForStep.accept(visitor);
@@ -68,6 +80,7 @@ public class SingleStatement_for extends SingleStatement {
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(ForNonTerm!=null) ForNonTerm.traverseTopDown(visitor);
         if(ForInit!=null) ForInit.traverseTopDown(visitor);
         if(ForCondition!=null) ForCondition.traverseTopDown(visitor);
         if(ForStep!=null) ForStep.traverseTopDown(visitor);
@@ -75,6 +88,7 @@ public class SingleStatement_for extends SingleStatement {
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(ForNonTerm!=null) ForNonTerm.traverseBottomUp(visitor);
         if(ForInit!=null) ForInit.traverseBottomUp(visitor);
         if(ForCondition!=null) ForCondition.traverseBottomUp(visitor);
         if(ForStep!=null) ForStep.traverseBottomUp(visitor);
@@ -86,6 +100,12 @@ public class SingleStatement_for extends SingleStatement {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
         buffer.append("SingleStatement_for(\n");
+
+        if(ForNonTerm!=null)
+            buffer.append(ForNonTerm.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
 
         if(ForInit!=null)
             buffer.append(ForInit.toString("  "+tab));
