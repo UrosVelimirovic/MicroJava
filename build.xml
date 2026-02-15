@@ -8,6 +8,7 @@
 					<exclude name = "util/Log4JUtils.java"></exclude>
 					<exclude name = "SemAnalyzer.java"></exclude>
 					<exclude name = "ActParsCounter.java"></exclude>
+					<exclude name = "ObjPrinter.java"></exclude>
 				</fileset>
 			</delete>
 	</target>

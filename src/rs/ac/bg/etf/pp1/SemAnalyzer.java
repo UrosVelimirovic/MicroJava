@@ -101,7 +101,7 @@ public class SemAnalyzer extends VisitorAdaptor {
 			if(constantType.assignableTo(currentType)) {
 				constObj = Tab.insert(Obj.Con, constDecl.getI1(), currentType);
 				constObj.setAdr(constant);
-				report_info("Deklarisanje simbolicke konstante: " + constObj.getName() + " preko simbolickog cvora ConstDecl.", constDecl);
+				report_info("Deklarisanje simbolicke konstante: " + constObj.getName() + " preko simbolickog cvora " + ObjPrinter.objToString(constObj), constDecl);
 			}
 			else {
 				report_error("Neadekvatna dodela konstanti: " + constDecl.getI1(), constDecl);
@@ -141,7 +141,7 @@ public class SemAnalyzer extends VisitorAdaptor {
 		
 		if(varObj == null || varObj == Tab.noObj) {
 			varObj = Tab.insert(Obj.Var, varDecl_var.getI1(), currentType);
-			report_info("Deklarisanje globalne promenljive: " + varObj.getName() + " preko simbolickog cvora VarDecl_var.", varDecl_var);
+			report_info("Deklarisanje globalne promenljive: " + varObj.getName() + " preko objektnog cvora ." + ObjPrinter.objToString(varObj), varDecl_var);
 		}
 		else {
 			report_error("Dvostruka definicija promenljive: " + varDecl_var.getI1(), varDecl_var);
@@ -351,7 +351,7 @@ public class SemAnalyzer extends VisitorAdaptor {
 			}
 			
 			if(reportType != null)
-				report_info("Pristup tipu: (" + reportType + ") preko objektnog cvora Designator_var", designator_var);
+				report_info("Pristup tipu: (" + reportType + ") preko objektnog cvora " + ObjPrinter.objToString(varObj), designator_var);
 		}
 	}
 	
@@ -382,7 +382,7 @@ public class SemAnalyzer extends VisitorAdaptor {
 		} 
 		else {
 			designator_elem.obj = new Obj(Obj.Elem, arrObj.getName() + "[$]", arrObj.getType().getElemType());
-			report_info("Pristup elemenut niza: " + arrObj.getName() + " preko objektnog cvora Designator_elem", designator_elem);
+			report_info("Pristup elemenut niza: " + arrObj.getName() + " preko objektnog cvora " + ObjPrinter.objToString(arrObj), designator_elem);
 		}
 	}
 	
@@ -499,8 +499,9 @@ public class SemAnalyzer extends VisitorAdaptor {
 				// report info
 				report_info("Poziv globalne metode: " 
 							+ designatorStatement_meth.getDesignator().obj.getName() 
-							+ " preko objektnog cvora DesignatorStatement_dec", 
-							designatorStatement_meth);
+							+ " preko objektnog cvora "
+							+ ObjPrinter.objToString(designatorStatement_meth.getDesignator().obj)
+							, designatorStatement_meth);
 			}
 		}
 	}
@@ -673,8 +674,9 @@ public class SemAnalyzer extends VisitorAdaptor {
 				// report info
 				report_info("Poziv globalne metode: " 
 							+ factorSub_meth.getDesignator().obj.getName() 
-							+ " preko objektnog cvora DesignatorStatement_dec", 
-							factorSub_meth);
+							+ " preko objektnog cvora "
+							+ ObjPrinter.objToString(factorSub_meth.getDesignator().obj)
+							, factorSub_meth);
 			}
 		}
 	}
