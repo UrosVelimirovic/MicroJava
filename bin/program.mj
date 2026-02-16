@@ -4,10 +4,15 @@ program test302
 int a, b[];
 
 {
-	
+	int  func()
+	{
+		//return 2;
+	}
 	void main()
 	{
-		print(2);
+		b = new int[2];
+		b[1] = 44;
+		print(b[0]);
 	}
 	
 	

@@ -250,6 +250,7 @@ public class SemAnalyzer extends VisitorAdaptor {
 	@Override
 	public void visit(MethodReturnTypeAndName_void methodReturnTypeAndName_void) {
 		currentMethod = Tab.insert(Obj.Meth, methodReturnTypeAndName_void.getI1(), Tab.noType);
+		methodReturnTypeAndName_void.obj = currentMethod;
 		Tab.openScope();
 		
 		if(methodReturnTypeAndName_void.getI1().equalsIgnoreCase("main"))
@@ -259,6 +260,7 @@ public class SemAnalyzer extends VisitorAdaptor {
 	@Override
 	public void visit(MethodReturnTypeAndName_Type methodReturnTypeAndName_Type) {
 		currentMethod = Tab.insert(Obj.Meth, methodReturnTypeAndName_Type.getI2(), currentType);
+		methodReturnTypeAndName_Type.obj = currentMethod;
 		Tab.openScope();
 	}
 	
@@ -327,6 +329,8 @@ public class SemAnalyzer extends VisitorAdaptor {
 		}
 		else
 			currentType = typeObj.getType();
+		
+		type.struct = currentType;
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------*/
