@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 15/1/2026 21:53:56
+// 16/1/2026 1:47:58
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -9,21 +9,32 @@ public class CaseClause implements SyntaxNode {
 
     private SyntaxNode parent;
     private int line;
-    private Integer N1;
+    private CaseBegin CaseBegin;
+    private Integer N2;
     private StatementList StatementList;
 
-    public CaseClause (Integer N1, StatementList StatementList) {
-        this.N1=N1;
+    public CaseClause (CaseBegin CaseBegin, Integer N2, StatementList StatementList) {
+        this.CaseBegin=CaseBegin;
+        if(CaseBegin!=null) CaseBegin.setParent(this);
+        this.N2=N2;
         this.StatementList=StatementList;
         if(StatementList!=null) StatementList.setParent(this);
     }
 
-    public Integer getN1() {
-        return N1;
+    public CaseBegin getCaseBegin() {
+        return CaseBegin;
     }
 
-    public void setN1(Integer N1) {
-        this.N1=N1;
+    public void setCaseBegin(CaseBegin CaseBegin) {
+        this.CaseBegin=CaseBegin;
+    }
+
+    public Integer getN2() {
+        return N2;
+    }
+
+    public void setN2(Integer N2) {
+        this.N2=N2;
     }
 
     public StatementList getStatementList() {
@@ -55,15 +66,18 @@ public class CaseClause implements SyntaxNode {
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(CaseBegin!=null) CaseBegin.accept(visitor);
         if(StatementList!=null) StatementList.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(CaseBegin!=null) CaseBegin.traverseTopDown(visitor);
         if(StatementList!=null) StatementList.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(CaseBegin!=null) CaseBegin.traverseBottomUp(visitor);
         if(StatementList!=null) StatementList.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -73,7 +87,13 @@ public class CaseClause implements SyntaxNode {
         buffer.append(tab);
         buffer.append("CaseClause(\n");
 
-        buffer.append(" "+tab+N1);
+        if(CaseBegin!=null)
+            buffer.append(CaseBegin.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        buffer.append(" "+tab+N2);
         buffer.append("\n");
 
         if(StatementList!=null)

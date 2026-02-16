@@ -175,6 +175,8 @@ nonterminal rs.etf.pp1.symboltable.concepts.Obj DesignatorArrayName;
 
 nonterminal ForNonTerm;
 nonterminal ActParsListBegin;
+
+nonterminal CaseBegin;
 /*----------------------------------------------------------------------------------------------------------------*/
 
 precedence left ELSE;
@@ -365,7 +367,9 @@ CaseList ::= (CaseList_recursive) CaseList CaseClause
 			 (CaseList_epsilon) /* epsilon */
 			 ;
 
-CaseClause ::= (CaseClause) CASE NUMBER COLON StatementList;
+CaseClause ::= (CaseClause) CaseBegin NUMBER COLON StatementList;
+
+CaseBegin ::= (CaseBegin) CASE;
 			   
 /*----------------------------------------------------------------------------------------------------------------*/
 

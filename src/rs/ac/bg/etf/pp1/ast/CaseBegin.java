@@ -5,9 +5,27 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class SingleStatement_break extends SingleStatement {
+public class CaseBegin implements SyntaxNode {
 
-    public SingleStatement_break () {
+    private SyntaxNode parent;
+    private int line;
+    public CaseBegin () {
+    }
+
+    public SyntaxNode getParent() {
+        return parent;
+    }
+
+    public void setParent(SyntaxNode parent) {
+        this.parent=parent;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public void setLine(int line) {
+        this.line=line;
     }
 
     public void accept(Visitor visitor) {
@@ -28,10 +46,10 @@ public class SingleStatement_break extends SingleStatement {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("SingleStatement_break(\n");
+        buffer.append("CaseBegin(\n");
 
         buffer.append(tab);
-        buffer.append(") [SingleStatement_break]");
+        buffer.append(") [CaseBegin]");
         return buffer.toString();
     }
 }

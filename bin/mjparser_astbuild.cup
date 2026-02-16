@@ -108,6 +108,7 @@ terminal Integer NUMBER;
 terminal Integer BOOL;
 terminal Character CHARACTER;
 
+/* TODO: oporavak od greske */
 /*----------------------------------------------------------------------------------------------------------------*/
 
 nonterminal Program Program;
@@ -174,6 +175,8 @@ nonterminal rs.etf.pp1.symboltable.concepts.Obj DesignatorArrayName;
 
 nonterminal ForNonTerm ForNonTerm;
 nonterminal ActParsListBegin ActParsListBegin;
+
+nonterminal CaseBegin CaseBegin;
 /*----------------------------------------------------------------------------------------------------------------*/
 
 precedence left ELSE;
@@ -364,7 +367,9 @@ CaseList ::= (CaseList_recursive) CaseList:C1 CaseClause:C2 {: RESULT=new CaseLi
 			 (CaseList_epsilon) {: RESULT=new CaseList_epsilon(); :} /* epsilon */
 			 ;
 
-CaseClause ::= (CaseClause) CASE NUMBER:N1 COLON StatementList:S2 {: RESULT=new CaseClause(N1, S2); RESULT.setLine(N1left); :};
+CaseClause ::= (CaseClause) CaseBegin:C1 NUMBER:N2 COLON StatementList:S3 {: RESULT=new CaseClause(C1, N2, S3); RESULT.setLine(C1left); :};
+
+CaseBegin ::= (CaseBegin) CASE {: RESULT=new CaseBegin(); :};
 			   
 /*----------------------------------------------------------------------------------------------------------------*/
 

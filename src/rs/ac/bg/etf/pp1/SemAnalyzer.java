@@ -39,10 +39,24 @@ public class SemAnalyzer extends VisitorAdaptor {
 	private String currentEnumName;
     Set<Integer> uniqueValuesInCurrentEnum;
     
-    private boolean inside_for_loop = false;
-    private boolean inside_case = false;
-    
+    private boolean inside_for_loop = false;    
     private int loopCnt = 0;
+    
+    private boolean inside_case = false;
+    private int caseCnt = 0;
+    
+   
+    private boolean extendedAssignableTo(Struct struct1, Struct struct2) { // We are saying struct2 = struct1
+    	if(struct1.assignableTo(struct2))
+    		return true;
+    	else if(struct2.getKind() == Struct.Enum && struct1.getKind() == Struct.Int)
+    		return true;
+    	else if(struct2.getKind() == Struct.Int && struct1.getKind() == Struct.Enum)
+    		return true;
+    	
+    	return false;
+    }
+    
 /*----------------------------------------------------------------------------------------------------------------*/
 
 	/* LOG MESSAGES */
@@ -56,11 +70,11 @@ public class SemAnalyzer extends VisitorAdaptor {
 	}
 
 	public void report_info(String message, SyntaxNode info) {
-		StringBuilder msg = new StringBuilder(message); 
-		int line = (info == null) ? 0: info.getLine();
-		if (line != 0)
-			msg.append (" na liniji ").append(line);
-		log.info(msg.toString());
+//		StringBuilder msg = new StringBuilder(message); 
+//		int line = (info == null) ? 0: info.getLine();
+//		if (line != 0)
+//			msg.append (" na liniji ").append(line);
+//		log.info(msg.toString());
 	}
 	
 	public boolean passed() {
@@ -98,7 +112,7 @@ public class SemAnalyzer extends VisitorAdaptor {
 			report_error("Dvostruka definicija konstante: " + constDecl.getI1(), constDecl);
 		}
 		else {
-			if(constantType.assignableTo(currentType)) {
+			if(extendedAssignableTo(constantType,currentType)) {
 				constObj = Tab.insert(Obj.Con, constDecl.getI1(), currentType);
 				constObj.setAdr(constant);
 				report_info("Deklarisanje simbolicke konstante: " + constObj.getName() + " preko simbolickog cvora " + ObjPrinter.objToString(constObj), constDecl);
@@ -376,7 +390,8 @@ public class SemAnalyzer extends VisitorAdaptor {
 		Obj arrObj = designator_elem.getDesignatorArrayName().obj;
 		if(arrObj == Tab.noObj)
 			designator_elem.obj = Tab.noObj;
-		else if(!designator_elem.getExpr().struct.equals(Tab.intType)) {
+		else if(!designator_elem.getExpr().struct.equals(Tab.intType)
+				&& !(designator_elem.getExpr().struct.getKind() == Struct.Enum)) {
 			report_error("Indeksiranje sa ne int vrednosti. [Designator_elem]", designator_elem);
 			designator_elem.obj = Tab.noObj;
 		} 
@@ -437,10 +452,9 @@ public class SemAnalyzer extends VisitorAdaptor {
 		int kind = designatorStatement_assign.getDesignator().obj.getKind();
 		if(kind != Obj.Var && kind != Obj.Elem) 
 			report_error("Dodela u neadekvatnu promenljivu: " + designatorStatement_assign.getDesignator().obj.getName(), designatorStatement_assign);
-		else if(!designatorStatement_assign.getExpr().struct.assignableTo(designatorStatement_assign.getDesignator().obj.getType()))
+		else if(!extendedAssignableTo(designatorStatement_assign.getExpr().struct, designatorStatement_assign.getDesignator().obj.getType()))
 			report_error("Neadekvatna dodela vrednosti u promenljivu: " + designatorStatement_assign.getDesignator().obj.getName(), designatorStatement_assign);
 	}
-	
 	@Override
 	public void visit(DesignatorStatement_inc designatorStatement_inc) {
 		int kind = designatorStatement_inc.getDesignator().obj.getKind();
@@ -480,7 +494,7 @@ public class SemAnalyzer extends VisitorAdaptor {
 				for (int i = 0; i < fpList.size(); i ++) {
 					Struct fps = fpList.get(i);
 					Struct aps = apList.get(i);
-					if(!aps.assignableTo(fps)) {
+					if(!extendedAssignableTo(aps,fps)) {
 						report_error("Greska pri pozivu metode " 
 										+ 
 										designatorStatement_meth.getDesignator().obj.getName() 
@@ -548,7 +562,11 @@ public class SemAnalyzer extends VisitorAdaptor {
 			report_error("Detektovana return naredba van scope-a funkcije! ", singleStatement_returnExpr);
 		} else if (currentMethod.getType() == Tab.noType) {
 			report_error("return naredba sa parametrom ne moze stajati u funkciji sa povratnim tipom void! ", singleStatement_returnExpr);
+		
 		} else if (!currentMethod.getType().equals(singleStatement_returnExpr.getExpr().struct)) {
+			// Edge case, da li je return expression dodeljivo tipu funkcije
+			if(extendedAssignableTo(singleStatement_returnExpr.getExpr().struct, currentMethod.getType()))
+				return;
 			report_error("Parametar return naredbe nije istog tipa kao povratni tip funkcije! ", singleStatement_returnExpr);
 		}
 	}
@@ -569,7 +587,7 @@ public class SemAnalyzer extends VisitorAdaptor {
 	
 	@Override
 	public void visit(SingleStatement_break singleStatement_break) {
-		if(!inside_for_loop || !inside_case)
+		if(!inside_for_loop && !inside_case)
 			report_error("Break naredba se ne nalazi unutar tela petlje ili case statement-a.", singleStatement_break);
 	}
 	
@@ -655,7 +673,7 @@ public class SemAnalyzer extends VisitorAdaptor {
 				for (int i = 0; i < fpList.size(); i ++) {
 					Struct fps = fpList.get(i);
 					Struct aps = apList.get(i);
-					if(!aps.assignableTo(fps)) {
+					if(!extendedAssignableTo(aps,fps)) {
 						report_error("Greska pri pozivu metode " 
 										+ 
 										factorSub_meth.getDesignator().obj.getName() 
@@ -694,7 +712,11 @@ public class SemAnalyzer extends VisitorAdaptor {
 	public void visit(MulopFactorList_mul mulopFactorList_mul) {
 		Struct left = mulopFactorList_mul.getMulopFactorList().struct;
 		Struct right = mulopFactorList_mul.getFactor().struct;
-		if(left.equals(Tab.intType) && right.equals(Tab.intType))
+		if(left.equals(Tab.intType) && right.equals(Tab.intType)
+				|| left.getKind() == Struct.Enum && right.equals(Tab.intType)
+				|| left.equals(Tab.intType) && right.getKind() == Struct.Enum
+				|| left.getKind() == Struct.Enum && right.getKind() == Struct.Enum
+		)
 			mulopFactorList_mul.struct = Tab.intType;
 		else {
 			report_error("Mulop operacija ne-int vrednosti.", mulopFactorList_mul);
@@ -717,7 +739,11 @@ public class SemAnalyzer extends VisitorAdaptor {
 	public void visit(AddopTermList_add addopTermList_add) {
 		Struct left = addopTermList_add.getAddopTermList().struct;
 		Struct right = addopTermList_add.getTerm().struct;
-		if(left.equals(Tab.intType) && right.equals(Tab.intType))
+		if(left.equals(Tab.intType) && right.equals(Tab.intType)
+			|| left.getKind() == Struct.Enum && right.equals(Tab.intType)
+			|| left.equals(Tab.intType) && right.getKind() == Struct.Enum
+			|| left.getKind() == Struct.Enum && right.getKind() == Struct.Enum
+		)
 			addopTermList_add.struct = Tab.intType;
 		else {
 			report_error("Addop operacija ne int vrednosti.", addopTermList_add);
@@ -834,6 +860,25 @@ public class SemAnalyzer extends VisitorAdaptor {
 		if(!condition.struct.equals(boolType))
 			report_error("Uslov nije tipa bool.", condition);
 	}
+
+/*----------------------------------------------------------------------------------------------------------------*/
+	// Case.
+	
+	@Override
+	public void visit(CaseBegin caseBegin) {
+		inside_case = true;
+		caseCnt++;
+	}
+	
+	@Override
+	public void visit(CaseClause caseClause) {
+		caseCnt--;
+		if (caseCnt == 0) {
+			inside_case = false;
+		}
+	}
+	
+	
 /*----------------------------------------------------------------------------------------------------------------*/
 }
 /*----------------------------------------------------------------------------------------------------------------*/
