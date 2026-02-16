@@ -101,6 +101,9 @@ public class CodeGenerator extends VisitorAdaptor {
 	@Override
 	public void visit(FactorSub_var factorSub_var) {
 		Code.load(factorSub_var.getDesignator().obj);
+		
+		// ako je niz, moramo da inkrementiramo elem
+		if(factorSub_var.getDesignator().obj)
 	}
 	
 	@Override
@@ -176,6 +179,10 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.load(designatorArrayName.obj);
 	}
 	
+	@Override
+	public void visit(Designator_elem designator_elem) {
+		
+	}
 	
 /*----------------------------------------------------------------------------------------------------------------*/
 	
@@ -183,7 +190,73 @@ public class CodeGenerator extends VisitorAdaptor {
 	
 	@Override
 	public void visit(DesignatorStatement_assign designatorStatement_assign) {
+		// astore ocekuje adr, index, val 
+		// znaci index moramo plus plus
+		if(designatorStatement_assign.getDesignator().obj.getKind() == Obj.Elem) {
+			// adr, index, val 
+			Code.put(Code.dup_x1);
+			// adr, val, index, val
+			Code.put(Code.pop);
+			// adr, val, index
+			Code.loadConst(1);
+			// adr, val, index, 1
+			Code.put(Code.add);
+			// adr, val, index + 1
+			Code.put(Code.dup_x1);
+			// adr, index + 1, val, index + 1
+			Code.put(Code.pop);
+			// adr, index + 1, val
+		}
 		Code.store(designatorStatement_assign.getDesignator().obj);
+	}
+	
+	@Override
+	public void visit(DesignatorStatement_inc designatorStatement_inc) {
+		if(designatorStatement_inc.getDesignator().obj.getKind() == Obj.Elem)
+			Code.put(Code.dup2);
+		else if(designatorStatement_inc.getDesignator().obj.getKind() == Obj.Fld)
+			Code.put(Code.dup);
+		Code.load(designatorStatement_inc.getDesignator().obj);
+		Code.loadConst(1);
+		Code.put(Code.add);
+		Code.store(designatorStatement_inc.getDesignator().obj);
+	}
+	
+	@Override
+	public void visit(DesignatorStatement_dec designatorStatement_dec) {
+		if(designatorStatement_dec.getDesignator().obj.getKind() == Obj.Elem)
+			Code.put(Code.dup2);
+		else if(designatorStatement_dec.getDesignator().obj.getKind() == Obj.Fld)
+			Code.put(Code.dup);
+		Code.load(designatorStatement_dec.getDesignator().obj);
+		Code.loadConst(1);
+		Code.put(Code.sub);
+		Code.store(designatorStatement_dec.getDesignator().obj);
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------*/
+
+	// Single statements.
+	
+	@Override
+	public void visit(SingleStatement_returnSemiColon singleStatement_returnSemiColon) {
+		Code.put(Code.exit);
+		Code.put(Code.return_);
+	}
+	
+	@Override
+	public void visit(SingleStatement_returnExpr singleStatement_returnExpr) {
+		Code.put(Code.exit);
+		Code.put(Code.return_);
+	}
+	
+	@Override
+	public void visit(SingleStatement_read singleStatement_read) {
+		if(singleStatement_read.getDesignator().obj.getType().equals(Tab.charType))
+			Code.put(Code.bread);
+		else
+			Code.put(Code.read);
+		Code.store(singleStatement_read.getDesignator().obj);
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------*/
