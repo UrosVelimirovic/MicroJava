@@ -1,25 +1,13 @@
 //Test 302
 
 program test302
-int a;
-const int i = 2, pi = 4;
-int x, y, z, w, s, d;
-bool ssss;
-enum kita {aasd, asdasdasda ,asdasdasdsa}
-char char1;
-kita SSSS;
-{
+int a, b[];
 
-	void f1(int a) int b;
-	{
-		a++;
-		b++;
-	}
+{
 	
 	void main()
 	{
-		x = i;
-		f1(2);
+		print(2);
 	}
 	
 	

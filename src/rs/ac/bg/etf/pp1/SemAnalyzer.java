@@ -44,6 +44,7 @@ public class SemAnalyzer extends VisitorAdaptor {
     
     private boolean inside_case = false;
     private int caseCnt = 0;
+	int nVars;
     
    
     private boolean extendedAssignableTo(Struct struct1, Struct struct2) { // We are saying struct2 = struct1
@@ -56,6 +57,7 @@ public class SemAnalyzer extends VisitorAdaptor {
     	
     	return false;
     }
+    
     
 /*----------------------------------------------------------------------------------------------------------------*/
 
@@ -93,6 +95,7 @@ public class SemAnalyzer extends VisitorAdaptor {
 	
 	@Override
 	public void visit(Program program) {
+		nVars = Tab.currentScope().getnVars();
 		Tab.chainLocalSymbols(currentProgram);
 		Tab.closeScope();
 		currentProgram = null;
@@ -488,7 +491,8 @@ public class SemAnalyzer extends VisitorAdaptor {
 			
 			List<Struct> apList = apc.getActParsList();
 			
-			if(fpList.size() != apList.size()) {
+			if(fpList.size() != apList.size()
+				 && designatorStatement_meth.getDesignator().obj.getLevel() != apList.size()) {
 				report_error("Broj parametara pri pozivu metode " + designatorStatement_meth.getDesignator().obj.getName() + " nije odgovarajuc!", designatorStatement_meth);
 			} else {
 				for (int i = 0; i < fpList.size(); i ++) {
@@ -667,7 +671,8 @@ public class SemAnalyzer extends VisitorAdaptor {
 			
 			List<Struct> apList = apc.getActParsList();
 			
-			if(fpList.size() != apList.size()) {
+			if(fpList.size() != apList.size()
+				&& factorSub_meth.getDesignator().obj.getLevel() != apList.size()) {
 				report_error("Broj parametara pri pozivu metode " + factorSub_meth.getDesignator().obj.getName() + " nije odgovarajuc!", factorSub_meth);
 			} else {
 				for (int i = 0; i < fpList.size(); i ++) {
