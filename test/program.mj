@@ -12,7 +12,7 @@ int a, b[];
 	{
 		b = new int[2];
 		b[0] = 44;
-		print(b[1]);
+		print(b[-1]);
 	}
 	
 	

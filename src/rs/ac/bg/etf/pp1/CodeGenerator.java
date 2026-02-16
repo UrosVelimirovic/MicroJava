@@ -101,9 +101,6 @@ public class CodeGenerator extends VisitorAdaptor {
 	@Override
 	public void visit(FactorSub_var factorSub_var) {
 		Code.load(factorSub_var.getDesignator().obj);
-		
-		// ako je niz, moramo da inkrementiramo elem
-		if(factorSub_var.getDesignator().obj)
 	}
 	
 	@Override
@@ -181,7 +178,13 @@ public class CodeGenerator extends VisitorAdaptor {
 	
 	@Override
 	public void visit(Designator_elem designator_elem) {
+		// imamo expr na vrhu steka
 		
+		// Index
+		Code.loadConst(1);
+		// Index, 1
+		Code.put(Code.add);
+		// Index + 1
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------*/
@@ -192,21 +195,21 @@ public class CodeGenerator extends VisitorAdaptor {
 	public void visit(DesignatorStatement_assign designatorStatement_assign) {
 		// astore ocekuje adr, index, val 
 		// znaci index moramo plus plus
-		if(designatorStatement_assign.getDesignator().obj.getKind() == Obj.Elem) {
-			// adr, index, val 
-			Code.put(Code.dup_x1);
-			// adr, val, index, val
-			Code.put(Code.pop);
-			// adr, val, index
-			Code.loadConst(1);
-			// adr, val, index, 1
-			Code.put(Code.add);
-			// adr, val, index + 1
-			Code.put(Code.dup_x1);
-			// adr, index + 1, val, index + 1
-			Code.put(Code.pop);
-			// adr, index + 1, val
-		}
+//		if(designatorStatement_assign.getDesignator().obj.getKind() == Obj.Elem) {
+//			// adr, index, val 
+//			Code.put(Code.dup_x1);
+//			// adr, val, index, val
+//			Code.put(Code.pop);
+//			// adr, val, index
+//			Code.loadConst(1);
+//			// adr, val, index, 1
+//			Code.put(Code.add);
+//			// adr, val, index + 1
+//			Code.put(Code.dup_x1);
+//			// adr, index + 1, val, index + 1
+//			Code.put(Code.pop);
+//			// adr, index + 1, val
+//		}
 		Code.store(designatorStatement_assign.getDesignator().obj);
 	}
 	
