@@ -6,13 +6,22 @@ int a, b[], c,d;
 {
 	int  func()
 	{
-		return a;
+		return 0;
 	}
 	void main()
 	{
-		func() = 2;
-		print(func());
-		
+		a = 3;
+		for(d = 0; d < 10; d++)
+		{
+			print(3);
+			for(c = 0; c < 1; c++)
+			{
+				break;
+				print(4);
+				
+			}
+			break; break;
+		}
 	}
 	
 	

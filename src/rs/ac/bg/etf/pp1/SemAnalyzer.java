@@ -587,7 +587,7 @@ public class SemAnalyzer extends VisitorAdaptor {
 	}
 	
 	@Override
-	public void visit(ForNonTerm forNonterm) {
+	public void visit(ForNonTerm forNonTerm) {
 		inside_for_loop = true;
 		loopCnt++;
 	}
@@ -894,6 +894,12 @@ public class SemAnalyzer extends VisitorAdaptor {
 		}
 	}
 	
+	@Override
+	public void visit(SingleStatement_switch singleStatement_switch) {
+		if(!singleStatement_switch.getExpr().struct.equals(Tab.intType)) {
+			report_error("Uslov u switch nije tipa int.", singleStatement_switch);
+		}
+	}
 	
 /*----------------------------------------------------------------------------------------------------------------*/
 }

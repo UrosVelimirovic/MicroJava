@@ -178,6 +178,7 @@ nonterminal ActParsListBegin;
 
 nonterminal CaseBegin;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj DesignatorArrayLengthHelper;
+nonterminal Else;
 /*----------------------------------------------------------------------------------------------------------------*/
 
 precedence left ELSE;
@@ -356,11 +357,12 @@ ForNonTerm ::= (ForNonTerm) FOR;
 
 /*----------------------------------------------------------------------------------------------------------------*/
 
-ElseStatement ::= 	(ElseStatement_yes) ELSE Statement
+ElseStatement ::= 	(ElseStatement_yes) Else Statement
 					|
 					(ElseStatement_no) /* epsilon */
 					;
 
+Else ::= (Else) ELSE;
 /*----------------------------------------------------------------------------------------------------------------*/
 					
 CaseList ::= (CaseList_recursive) CaseList CaseClause

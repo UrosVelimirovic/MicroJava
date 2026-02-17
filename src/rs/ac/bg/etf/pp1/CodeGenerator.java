@@ -72,9 +72,7 @@ public class CodeGenerator extends VisitorAdaptor {
 			Code.put(Code.bprint);
 		else
 			Code.put(Code.print);
-		
 		printNewLine();
-		
 	}
 	
 	@Override
@@ -252,6 +250,236 @@ public class CodeGenerator extends VisitorAdaptor {
 		else
 			Code.put(Code.read);
 		Code.store(singleStatement_read.getDesignator().obj);
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------*/
+
+	//Condition 
+	
+	private int returnRelOp(Relop relop) {
+		if(relop instanceof Relop_eq)
+			return Code.eq;
+		else if(relop instanceof Relop_ne)
+			return Code.ne;
+		else if(relop instanceof Relop_lt)
+			return Code.lt;
+		else if(relop instanceof Relop_le)
+			return Code.le;
+		else if(relop instanceof Relop_gt)
+			return Code.gt;
+		else if(relop instanceof Relop_ge)
+			return Code.ge;
+		else
+			return -1; // greska
+	}
+	
+	private Stack<Integer> skipCondFact = new Stack<>();
+	private Stack<Integer> skipCondition = new Stack<>();
+	private Stack<Integer> skipThen = new Stack<>();
+	private Stack<Integer> skipElse = new Stack<>();
+
+	@Override
+	public void visit(CondFact_expr condFact_expr) {
+		Code.loadConst(0); // ukoliko je jednako sa nulom, to je false za ceo if i onda skace
+		// znaci false jump ako nije ispunjeno not equal sto znaci ispunjeno equal onda skaci.
+		Code.putFalseJump(Code.ne, 0); //netacna
+		skipCondFact.push(Code.pc - 2);
+		//tacna
+	}
+	
+	@Override
+	public void visit(CondFact_expr_relop_expr condFact_expr_relop_expr) {
+		Code.putFalseJump(returnRelOp(condFact_expr_relop_expr.getRelop()), 0); //netacna
+		skipCondFact.push(Code.pc - 2);
+		//tacna
+	}
+	
+	@Override
+	public void visit(CondTerm condTerm) {
+		Code.putJump(0); //tacne bacamo na THEN
+		skipCondition.push(Code.pc - 2);
+		//ovde vracam netacne
+		while(!skipCondFact.empty())
+			Code.fixup(skipCondFact.pop());
+		//netacne
+	}
+	
+	@Override
+	public void visit(Condition condition) {
+		//netcni
+		Code.putJump(0); //netacne bacamo na ELSE jer je ovo poslednja grana or
+		skipThen.push(Code.pc - 2);
+		//THEN
+		while(!skipCondition.empty())
+			Code.fixup(skipCondition.pop());
+		//tacne
+	}
+	
+	@Override
+	public void visit(ElseStatement_no elseStatement_no) {
+		//tacne
+		Code.fixup(skipThen.pop());
+		//tacne + netacne
+	}
+	
+	@Override
+	public void visit(Else else_) {
+		//tacne
+		Code.putJump(0); //tacne bacamo na kraj ELSE
+		skipElse.push(Code.pc - 2);
+		Code.fixup(skipThen.pop());
+		//netacne
+	}
+	
+	@Override
+	public void visit(ElseStatement_yes elseStatement_yes) {
+		//netcane
+		Code.fixup(skipElse.pop()); //varacamo tacne koji su preskocili ELSE
+		//netacne + tacne
+	}
+	
+/*----------------------------------------------------------------------------------------------------------------*/
+	
+	// For petlja
+	
+	private Stack<Integer> forCondStart = new Stack<>();
+	private Stack<Integer> forStepStart = new Stack<>();
+	private Stack<Integer> forBodyJump = new Stack<>();
+	private Stack<Boolean> forHasStep = new Stack<>();
+	private Stack<Boolean> forHasCondition = new Stack<>();
+	private Stack<List<Integer>> forBreakJumps = new Stack<>();
+	private Stack<List<Integer>> forContinueJumps = new Stack<>();
+
+	
+	@Override
+	public void visit(ForInit_DesignatorStatement forInit_DesignatorStatement) {
+	    // After init executes, we mark where condition checking begins
+	    forCondStart.push(Code.pc);
+	}
+	
+	@Override
+	public void visit(ForInit_epsilon forInit_epsilon) {
+	    // No init, just mark where condition checking begins
+	    forCondStart.push(Code.pc);
+	}
+	
+	@Override
+	public void visit(ForCondition_Condition forCondition_Condition) {
+	    // Condition was evaluated
+	    // skipThen has the address to fixup for false jump to exit
+	    // Now we need to jump over the step code to get to the body
+	    Code.putJump(0);
+	    forBodyJump.push(Code.pc - 2);
+	    
+	    // Mark where step code will be generated
+	    forStepStart.push(Code.pc);
+	    
+	    // Mark that this for loop has a condition
+	    forHasCondition.push(true);
+	}
+	
+	@Override
+	public void visit(ForCondition_epsilon forCondition_epsilon) {
+	    // No condition, jump directly over step to body
+	    Code.putJump(0);
+	    forBodyJump.push(Code.pc - 2);
+	    
+	    // Mark where step code will be generated
+	    forStepStart.push(Code.pc);
+	    
+	    // Mark that this for loop has no condition
+	    forHasCondition.push(false);
+	}
+	
+	@Override
+	public void visit(ForStep_DesignatorStatement forStep_DesignatorStatement) {
+	    // Step code has been generated
+	    // Now jump back to condition
+	    Code.putJump(forCondStart.peek());
+	    
+	    // Fix up the jump to body - it should land here (after step code)
+	    Code.fixup(forBodyJump.pop());
+	    
+	    // Mark that this for loop has a step
+	    forHasStep.push(true);
+	}
+	
+	@Override
+	public void visit(ForStep_epsilon forStep_epsilon) {
+	    // No step code, fix up jump to body to land here
+	    Code.fixup(forBodyJump.pop());
+	    
+	    // Mark that this for loop has no step
+	    forHasStep.push(false);
+	}
+	
+	@Override
+	public void visit(ForNonTerm forNonTerm) {
+	    // Initialize break and continue jumps lists for this for loop
+	    forBreakJumps.push(new ArrayList<>());
+	    forContinueJumps.push(new ArrayList<>());
+	}
+	
+	@Override 
+	public void visit(SingleStatement_for singleStatement_for)
+	{
+	    // Body has finished executing
+	    boolean hasStep = forHasStep.pop();
+	    boolean hasCondition = forHasCondition.pop();
+	    
+	    if (hasStep) {
+	        // Fixup all continue jumps to point to step
+	        List<Integer> continues = forContinueJumps.pop();
+	        for (Integer jumpAddr : continues) {
+	            Code.fixup(jumpAddr);
+	        }
+	        
+	        // Jump back to step (which then jumps to condition)
+	        Code.putJump(forStepStart.pop());
+	    } else {
+	        // Fixup all continue jumps to point to condition
+	        List<Integer> continues = forContinueJumps.pop();
+	        for (Integer jumpAddr : continues) {
+	            Code.fixup(jumpAddr);
+	        }
+	        
+	        // Jump back to condition directly
+	        Code.putJump(forCondStart.peek());
+	        forStepStart.pop(); // Pop but don't use
+	    }
+	    
+	    // Fix up the condition's false jump to point here (exit point)
+	    // This happens if there was a condition
+	    if (hasCondition && !skipThen.empty()) {
+	        Code.fixup(skipThen.pop());
+	    }
+	    
+	    // Fixup all break jumps to point here (end of for loop)
+	    List<Integer> breaks = forBreakJumps.pop();
+	    for (Integer jumpAddr : breaks) {
+	        Code.fixup(jumpAddr);
+	    }
+	    
+	    // Now we're done with this for loop, pop the condition start
+	    forCondStart.pop();
+	}
+	
+	@Override
+	public void visit(SingleStatement_break singleStatement_break) {
+	    // Break from the innermost for loop
+	    if (!forBreakJumps.isEmpty()) {
+	        Code.putJump(0);
+	        forBreakJumps.peek().add(Code.pc - 2);
+	    }
+	}
+	
+	@Override
+	public void visit(SingleStatement_continue singleStatement_continue) {
+	    // Continue to the next iteration of the innermost for loop
+	    if (!forContinueJumps.isEmpty()) {
+	        Code.putJump(0);
+	        forContinueJumps.peek().add(Code.pc - 2);
+	    }
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------*/

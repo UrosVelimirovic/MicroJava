@@ -5,9 +5,27 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class ForStep_epsilon extends ForStep {
+public class Else implements SyntaxNode {
 
-    public ForStep_epsilon () {
+    private SyntaxNode parent;
+    private int line;
+    public Else () {
+    }
+
+    public SyntaxNode getParent() {
+        return parent;
+    }
+
+    public void setParent(SyntaxNode parent) {
+        this.parent=parent;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public void setLine(int line) {
+        this.line=line;
     }
 
     public void accept(Visitor visitor) {
@@ -28,10 +46,10 @@ public class ForStep_epsilon extends ForStep {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("ForStep_epsilon(\n");
+        buffer.append("Else(\n");
 
         buffer.append(tab);
-        buffer.append(") [ForStep_epsilon]");
+        buffer.append(") [Else]");
         return buffer.toString();
     }
 }

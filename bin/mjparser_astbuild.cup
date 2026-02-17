@@ -178,6 +178,7 @@ nonterminal ActParsListBegin ActParsListBegin;
 
 nonterminal CaseBegin CaseBegin;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj DesignatorArrayLengthHelper;
+nonterminal Else Else;
 /*----------------------------------------------------------------------------------------------------------------*/
 
 precedence left ELSE;
@@ -356,11 +357,12 @@ ForNonTerm ::= (ForNonTerm) FOR {: RESULT=new ForNonTerm(); :};
 
 /*----------------------------------------------------------------------------------------------------------------*/
 
-ElseStatement ::= 	(ElseStatement_yes) ELSE Statement:S1 {: RESULT=new ElseStatement_yes(S1); RESULT.setLine(S1left); :}
+ElseStatement ::= 	(ElseStatement_yes) Else:E1 Statement:S2 {: RESULT=new ElseStatement_yes(E1, S2); RESULT.setLine(E1left); :}
 					|
 					(ElseStatement_no) {: RESULT=new ElseStatement_no(); :} /* epsilon */
 					;
 
+Else ::= (Else) ELSE {: RESULT=new Else(); :};
 /*----------------------------------------------------------------------------------------------------------------*/
 					
 CaseList ::= (CaseList_recursive) CaseList:C1 CaseClause:C2 {: RESULT=new CaseList_recursive(C1, C2); RESULT.setLine(C1left); :}
