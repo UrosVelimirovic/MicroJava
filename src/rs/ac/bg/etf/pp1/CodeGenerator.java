@@ -25,6 +25,46 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.loadConst(1);
 		Code.put(Code.bprint);
 	}
+
+	private Stack<Integer> ternaryEndJumps = new Stack<>();
+	private Stack<Boolean> ternaryPendingFalseFixup = new Stack<>();
+
+	private void fixupTernaryFalseStartIfNeeded() {
+		if (!ternaryPendingFalseFixup.isEmpty() && ternaryPendingFalseFixup.peek()) {
+			ternaryPendingFalseFixup.pop();
+			if (!skipThen.isEmpty()) {
+				Code.fixup(skipThen.pop());
+			}
+		}
+	}
+
+    private void initializePredeclaredMethods() {
+        // 'ord' and 'chr' are the same code.
+        Obj ordMethod = Tab.find("ord");
+        Obj chrMethod = Tab.find("chr");
+        ordMethod.setAdr(Code.pc);
+        chrMethod.setAdr(Code.pc);
+        Code.put(Code.enter);
+        Code.put(1);
+        Code.put(1);
+        Code.put(Code.load_n);
+        Code.put(Code.exit);
+        Code.put(Code.return_);
+
+        Obj lenMethod = Tab.find("len");
+        lenMethod.setAdr(Code.pc);
+        Code.put(Code.enter);
+        Code.put(1);
+        Code.put(1);
+        Code.put(Code.load_n);
+        Code.put(Code.arraylength);
+        Code.put(Code.exit);
+        Code.put(Code.return_);
+    }
+
+	public CodeGenerator() {
+		initializePredeclaredMethods();
+	}
 /*----------------------------------------------------------------------------------------------------------------*/
 
 	/* METHOD DECLARATIONS */
@@ -91,21 +131,25 @@ public class CodeGenerator extends VisitorAdaptor {
 	
 	@Override
 	public void visit(FactorSub_n factorSub_n) {
+		fixupTernaryFalseStartIfNeeded();
 		Code.loadConst(factorSub_n.getN1());
 	}
 	
 	@Override
 	public void visit(FactorSub_c factorSub_c) {
+		fixupTernaryFalseStartIfNeeded();
 		Code.loadConst(factorSub_c.getC1());
 	}
 	
 	@Override
 	public void visit(FactorSub_b factorSub_b) {
+		fixupTernaryFalseStartIfNeeded();
 		Code.loadConst(factorSub_b.getB1());
 	}
 
 	@Override
 	public void visit(FactorSub_var factorSub_var) {
+		fixupTernaryFalseStartIfNeeded();
 		if(factorSub_var.getDesignator() instanceof Designator_arraylength)
 	        return; // skip loading array.length on stack as something.
 		Code.load(factorSub_var.getDesignator().obj);
@@ -119,6 +163,7 @@ public class CodeGenerator extends VisitorAdaptor {
 	
 	@Override
 	public void visit(FactorSub_new_array factorSub_new_array) {
+		fixupTernaryFalseStartIfNeeded();
 		Code.put(Code.newarray);
 		if(factorSub_new_array.getType().struct.equals(Tab.charType))
 			Code.put(0);	
@@ -128,6 +173,7 @@ public class CodeGenerator extends VisitorAdaptor {
 	
 	@Override
 	public void visit(FactorSub_meth factorSub_meth) {
+		fixupTernaryFalseStartIfNeeded();
 		// mora ovde offset jer call inkrementira pc.
 		int offset = factorSub_meth.getDesignator().obj.getAdr() - Code.pc;
 		Code.put(Code.call);
@@ -144,6 +190,37 @@ public class CodeGenerator extends VisitorAdaptor {
 			Code.put(Code.add);
 		else if(addopTermList_add.getAddop() instanceof Addop_minus)
 			Code.put(Code.sub);
+	}
+
+	@Override
+	public void visit(Expr_NonTernary expr_NonTernary) {
+		if (expr_NonTernary.getParent() instanceof TernaryExpr) {
+			TernaryExpr owner = (TernaryExpr) expr_NonTernary.getParent();
+			if (owner.getExpr() == expr_NonTernary) {
+				Code.putJump(0);
+				ternaryEndJumps.push(Code.pc - 2);
+				ternaryPendingFalseFixup.push(true);
+			}
+		}
+	}
+
+	@Override
+	public void visit(Expr_Ternary expr_Ternary) {
+		if (expr_Ternary.getParent() instanceof TernaryExpr) {
+			TernaryExpr owner = (TernaryExpr) expr_Ternary.getParent();
+			if (owner.getExpr() == expr_Ternary) {
+				Code.putJump(0);
+				ternaryEndJumps.push(Code.pc - 2);
+				ternaryPendingFalseFixup.push(true);
+			}
+		}
+	}
+
+	@Override
+	public void visit(TernaryExpr ternaryExpr) {
+		if (!ternaryEndJumps.isEmpty()) {
+			Code.fixup(ternaryEndJumps.pop());
+		}
 	}
 	
 	
@@ -163,17 +240,20 @@ public class CodeGenerator extends VisitorAdaptor {
 	
 	@Override
 	public void visit(DesignatorArrayName designatorArrayName) {
+		fixupTernaryFalseStartIfNeeded();
 		Code.load(designatorArrayName.obj);
 	}
 	
 	@Override 
 	public void visit(DesignatorArrayLengthHelper designatorArrayLengthHelper) {
+		fixupTernaryFalseStartIfNeeded();
 		Code.load(designatorArrayLengthHelper.obj);
 	}
 	
 	@Override
 	public void visit(Designator_arraylength designator_arraylength) {
 		// addr
+		fixupTernaryFalseStartIfNeeded();
 		Code.put(Code.arraylength);
 		// len
 	}

@@ -896,7 +896,8 @@ public class SemAnalyzer extends VisitorAdaptor {
 	
 	@Override
 	public void visit(SingleStatement_switch singleStatement_switch) {
-		if(!singleStatement_switch.getExpr().struct.equals(Tab.intType)) {
+		if(!singleStatement_switch.getExpr().struct.equals(Tab.intType)
+				&& !(singleStatement_switch.getExpr().struct.getKind() == Struct.Enum)) {
 			report_error("Uslov u switch nije tipa int.", singleStatement_switch);
 		}
 	}
