@@ -100,7 +100,7 @@ public class SemAnalyzer extends VisitorAdaptor {
 		Tab.closeScope();
 		currentProgram = null;
 		
-		if(mainMethod == null) // || mainMethod.getLevel() > 0)
+		if(mainMethod == null || mainMethod.getLevel() > 0)
 			report_error("Program nema adekvatnu main metodu", program);
 	}
 	
@@ -392,6 +392,29 @@ public class SemAnalyzer extends VisitorAdaptor {
 		}
 	}
 	
+	@Override 
+	public void visit(DesignatorArrayLengthHelper designatorArrayLengthHelper) {
+		Obj arrObj = Tab.find(designatorArrayLengthHelper.getI1());
+		if(arrObj == Tab.noObj) {
+			report_error("Pristup nedefinisanoj promenljivi niza: " + designatorArrayLengthHelper.getI1(), designatorArrayLengthHelper);
+			designatorArrayLengthHelper.obj = Tab.noObj;
+		}
+		else if(arrObj.getKind() != Obj.Var && arrObj.getType().getKind() != Struct.Array) {
+			report_error("Neadekvatna promenljiva niza: " + designatorArrayLengthHelper.getI1(), designatorArrayLengthHelper);
+			designatorArrayLengthHelper.obj = Tab.noObj;
+		}
+		else {
+			designatorArrayLengthHelper.obj = arrObj;
+		}
+	}
+	
+	@Override
+	public void visit(Designator_arraylength designator_arraylength) {
+		Obj arrObj = designator_arraylength.getDesignatorArrayLengthHelper().obj;
+
+		designator_arraylength.obj = new Obj(Obj.Con, "length", Tab.intType);
+	}
+	
 	@Override
 	public void visit(Designator_elem designator_elem) {
 		Obj arrObj = designator_elem.getDesignatorArrayName().obj;
@@ -408,22 +431,6 @@ public class SemAnalyzer extends VisitorAdaptor {
 		}
 	}
 	
-	@Override
-	public void visit(Designator_arraylength designator_arraylength) {
-		Obj arrObj = Tab.find(designator_arraylength.getI1());
-		
-		if(arrObj == Tab.noObj) {
-			report_error("Pristup nedefinisanoj promenljivi niza: " + designator_arraylength.getI1(), designator_arraylength);
-			designator_arraylength.obj = Tab.noObj;
-		}
-		else if(arrObj.getKind() != Obj.Var && arrObj.getType().getKind() != Struct.Array) {
-			report_error("Neadekvatna promenljiva niza: " + designator_arraylength.getI1(), designator_arraylength);
-			designator_arraylength.obj = Tab.noObj;
-		}
-		else {
-			designator_arraylength.obj = new Obj(Obj.Con, arrObj.getName() + "[$]", Tab.intType);
-		}
-	}
 	
 	@Override
 	public void visit(Designator_enumdotident designator_enumdotident) {

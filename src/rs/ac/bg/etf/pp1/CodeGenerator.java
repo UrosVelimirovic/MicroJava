@@ -19,6 +19,12 @@ public class CodeGenerator extends VisitorAdaptor {
 		return this.mainPC;
 	}
 	
+	private void printNewLine() {
+		int newLineChar = (int)('\n');
+		Code.loadConst(newLineChar);
+		Code.loadConst(1);
+		Code.put(Code.bprint);
+	}
 /*----------------------------------------------------------------------------------------------------------------*/
 
 	/* METHOD DECLARATIONS */
@@ -67,6 +73,8 @@ public class CodeGenerator extends VisitorAdaptor {
 		else
 			Code.put(Code.print);
 		
+		printNewLine();
+		
 	}
 	
 	@Override
@@ -100,6 +108,8 @@ public class CodeGenerator extends VisitorAdaptor {
 
 	@Override
 	public void visit(FactorSub_var factorSub_var) {
+		if(factorSub_var.getDesignator() instanceof Designator_arraylength)
+	        return; // skip loading array.length on stack as something.
 		Code.load(factorSub_var.getDesignator().obj);
 	}
 	
@@ -111,37 +121,19 @@ public class CodeGenerator extends VisitorAdaptor {
 	
 	@Override
 	public void visit(FactorSub_new_array factorSub_new_array) {
-		
-		// size
-		Code.put(Code.dup); 
-		// size, size
-		// Add 1 na velicinu niza da bi imali prostor za duzinu niza.
-		Code.put(Code.const_1); 
-		// size, size , 1
-		Code.put(Code.add); 
-		//size, size + 1
-		
 		Code.put(Code.newarray);
 		if(factorSub_new_array.getType().struct.equals(Tab.charType))
 			Code.put(0);	
 		else
 			Code.put(1);
-		
-		// size, adr
-		Code.put(Code.dup_x1); 
-		// adr, size, adr
-		Code.put(Code.dup_x2); 
-		// adr, adr, size, adr
-		Code.put(Code.pop); 
-		// adr, adr, size
-		Code.loadConst(0); 
-		// adr, adr, size, 0
-		Code.put(Code.dup_x1); 
-		// adr, adr, 0, size, 0
-		Code.put(Code.pop); 
-		// adr, adr, 0, size
-		Code.put(Code.astore); 
-		// adr
+	}
+	
+	@Override
+	public void visit(FactorSub_meth factorSub_meth) {
+		// mora ovde offset jer call inkrementira pc.
+		int offset = factorSub_meth.getDesignator().obj.getAdr() - Code.pc;
+		Code.put(Code.call);
+		Code.put2(offset);
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------*/
@@ -176,15 +168,20 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.load(designatorArrayName.obj);
 	}
 	
+	@Override 
+	public void visit(DesignatorArrayLengthHelper designatorArrayLengthHelper) {
+		Code.load(designatorArrayLengthHelper.obj);
+	}
+	
+	@Override
+	public void visit(Designator_arraylength designator_arraylength) {
+		// addr
+		Code.put(Code.arraylength);
+		// len
+	}
+	
 	@Override
 	public void visit(Designator_elem designator_elem) {
-		// imamo expr na vrhu steka
-		
-		// Index
-		Code.loadConst(1);
-		// Index, 1
-		Code.put(Code.add);
-		// Index + 1
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------*/
@@ -193,23 +190,6 @@ public class CodeGenerator extends VisitorAdaptor {
 	
 	@Override
 	public void visit(DesignatorStatement_assign designatorStatement_assign) {
-		// astore ocekuje adr, index, val 
-		// znaci index moramo plus plus
-//		if(designatorStatement_assign.getDesignator().obj.getKind() == Obj.Elem) {
-//			// adr, index, val 
-//			Code.put(Code.dup_x1);
-//			// adr, val, index, val
-//			Code.put(Code.pop);
-//			// adr, val, index
-//			Code.loadConst(1);
-//			// adr, val, index, 1
-//			Code.put(Code.add);
-//			// adr, val, index + 1
-//			Code.put(Code.dup_x1);
-//			// adr, index + 1, val, index + 1
-//			Code.put(Code.pop);
-//			// adr, index + 1, val
-//		}
 		Code.store(designatorStatement_assign.getDesignator().obj);
 	}
 	
@@ -235,6 +215,18 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.loadConst(1);
 		Code.put(Code.sub);
 		Code.store(designatorStatement_dec.getDesignator().obj);
+	}
+	
+	@Override
+	public void visit(DesignatorStatement_meth designatorStatement_meth) {
+		// mora ovde offset jer call inkrementira pc.
+		int offset = designatorStatement_meth.getDesignator().obj.getAdr() - Code.pc;
+		Code.put(Code.call);
+		Code.put2(offset);
+		
+		// Ako imamo izraz f(); sam sa sobom, ostavice djubre na steku.
+		if(designatorStatement_meth.getDesignator().obj.getType() != Tab.noType)
+			Code.put(Code.pop);
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------*/

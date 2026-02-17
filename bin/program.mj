@@ -1,18 +1,18 @@
 //Test 302
 
 program test302
-int a, b[];
+int a, b[], c,d;
 
 {
 	int  func()
 	{
-		//return 2;
+		return a;
 	}
 	void main()
 	{
-		b = new int[2];
-		b[0] = 44;
-		print(b[-1]);
+		func() = 2;
+		print(func());
+		
 	}
 	
 	

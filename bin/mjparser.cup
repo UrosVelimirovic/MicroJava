@@ -177,6 +177,7 @@ nonterminal ForNonTerm;
 nonterminal ActParsListBegin;
 
 nonterminal CaseBegin;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj DesignatorArrayLengthHelper;
 /*----------------------------------------------------------------------------------------------------------------*/
 
 precedence left ELSE;
@@ -449,11 +450,12 @@ Designator ::= 	(Designator_var) IDENT /* 0 3 */
 				|
 				(Designator_elem) DesignatorArrayName LBRACKET Expr RBRACKET /* 4 */
 				|
-				(Designator_arraylength) IDENT DOT LENGTH	/* 5 */			
+				(Designator_arraylength) DesignatorArrayLengthHelper	/* 5 */			
 				;
 
 DesignatorArrayName ::= (DesignatorArrayName) IDENT;
 
+DesignatorArrayLengthHelper ::= (DesignatorArrayLengthHelper) IDENT DOT LENGTH;
 /*----------------------------------------------------------------------------------------------------------------*/
 
 /*		

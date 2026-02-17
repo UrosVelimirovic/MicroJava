@@ -1,24 +1,25 @@
 // generated with ast extension for cup
 // version 0.8
-// 16/1/2026 19:30:47
+// 17/1/2026 12:42:23
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class Designator_arraylength extends Designator {
 
-    private String I1;
+    private DesignatorArrayLengthHelper DesignatorArrayLengthHelper;
 
-    public Designator_arraylength (String I1) {
-        this.I1=I1;
+    public Designator_arraylength (DesignatorArrayLengthHelper DesignatorArrayLengthHelper) {
+        this.DesignatorArrayLengthHelper=DesignatorArrayLengthHelper;
+        if(DesignatorArrayLengthHelper!=null) DesignatorArrayLengthHelper.setParent(this);
     }
 
-    public String getI1() {
-        return I1;
+    public DesignatorArrayLengthHelper getDesignatorArrayLengthHelper() {
+        return DesignatorArrayLengthHelper;
     }
 
-    public void setI1(String I1) {
-        this.I1=I1;
+    public void setDesignatorArrayLengthHelper(DesignatorArrayLengthHelper DesignatorArrayLengthHelper) {
+        this.DesignatorArrayLengthHelper=DesignatorArrayLengthHelper;
     }
 
     public void accept(Visitor visitor) {
@@ -26,13 +27,16 @@ public class Designator_arraylength extends Designator {
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(DesignatorArrayLengthHelper!=null) DesignatorArrayLengthHelper.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(DesignatorArrayLengthHelper!=null) DesignatorArrayLengthHelper.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(DesignatorArrayLengthHelper!=null) DesignatorArrayLengthHelper.traverseBottomUp(visitor);
         accept(visitor);
     }
 
@@ -41,7 +45,10 @@ public class Designator_arraylength extends Designator {
         buffer.append(tab);
         buffer.append("Designator_arraylength(\n");
 
-        buffer.append(" "+tab+I1);
+        if(DesignatorArrayLengthHelper!=null)
+            buffer.append(DesignatorArrayLengthHelper.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         buffer.append(tab);

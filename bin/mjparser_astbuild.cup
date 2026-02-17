@@ -177,6 +177,7 @@ nonterminal ForNonTerm ForNonTerm;
 nonterminal ActParsListBegin ActParsListBegin;
 
 nonterminal CaseBegin CaseBegin;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj DesignatorArrayLengthHelper;
 /*----------------------------------------------------------------------------------------------------------------*/
 
 precedence left ELSE;
@@ -449,11 +450,12 @@ Designator ::= 	(Designator_var) IDENT:I1 {: RESULT=new Designator_var(I1); RESU
 				|
 				(Designator_elem) DesignatorArrayName:D1 LBRACKET Expr:E2 RBRACKET {: RESULT=new Designator_elem(D1, E2); RESULT.setLine(D1left); :} /* 4 */
 				|
-				(Designator_arraylength) IDENT:I1 DOT LENGTH {: RESULT=new Designator_arraylength(I1); RESULT.setLine(I1left); :}	/* 5 */			
+				(Designator_arraylength) DesignatorArrayLengthHelper:D1 {: RESULT=new Designator_arraylength(D1); RESULT.setLine(D1left); :}	/* 5 */			
 				;
 
 DesignatorArrayName ::= (DesignatorArrayName) IDENT:I1 {: RESULT=new DesignatorArrayName(I1); RESULT.setLine(I1left); :};
 
+DesignatorArrayLengthHelper ::= (DesignatorArrayLengthHelper) IDENT:I1 DOT LENGTH {: RESULT=new DesignatorArrayLengthHelper(I1); RESULT.setLine(I1left); :};
 /*----------------------------------------------------------------------------------------------------------------*/
 
 /*		
