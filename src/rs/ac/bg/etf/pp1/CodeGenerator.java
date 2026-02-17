@@ -349,6 +349,21 @@ public class CodeGenerator extends VisitorAdaptor {
 	private Stack<Boolean> forHasCondition = new Stack<>();
 	private Stack<List<Integer>> forBreakJumps = new Stack<>();
 	private Stack<List<Integer>> forContinueJumps = new Stack<>();
+	private Stack<String> breakTargets = new Stack<>();
+	
+	// Switch statement
+	private Stack<SingleStatement_switch> switchOwners = new Stack<>();
+	private Stack<List<Integer>> switchBreakJumps = new Stack<>();
+	private Stack<Integer> switchPendingFalseJump = new Stack<>();
+	private Stack<Integer> switchPendingFallthroughJump = new Stack<>();
+
+	private SingleStatement_switch findEnclosingSwitch(SyntaxNode node) {
+		SyntaxNode current = node;
+		while (current != null && !(current instanceof SingleStatement_switch)) {
+			current = current.getParent();
+		}
+		return (SingleStatement_switch) current;
+	}
 
 	
 	@Override
@@ -418,6 +433,7 @@ public class CodeGenerator extends VisitorAdaptor {
 	    // Initialize break and continue jumps lists for this for loop
 	    forBreakJumps.push(new ArrayList<>());
 	    forContinueJumps.push(new ArrayList<>());
+	    breakTargets.push("for");
 	}
 	
 	@Override 
@@ -462,14 +478,22 @@ public class CodeGenerator extends VisitorAdaptor {
 	    
 	    // Now we're done with this for loop, pop the condition start
 	    forCondStart.pop();
+	    if (!breakTargets.isEmpty() && "for".equals(breakTargets.peek())) {
+	    	breakTargets.pop();
+	    }
 	}
 	
 	@Override
 	public void visit(SingleStatement_break singleStatement_break) {
-	    // Break from the innermost for loop
-	    if (!forBreakJumps.isEmpty()) {
-	        Code.putJump(0);
-	        forBreakJumps.peek().add(Code.pc - 2);
+	    // Break from the innermost loop or switch
+	    Code.putJump(0);
+	    int jumpAddr = Code.pc - 2;
+	    if (!breakTargets.isEmpty() && "switch".equals(breakTargets.peek())) {
+	    	if (!switchBreakJumps.isEmpty()) {
+	    		switchBreakJumps.peek().add(jumpAddr);
+	    	}
+	    } else if (!forBreakJumps.isEmpty()) {
+	    	forBreakJumps.peek().add(jumpAddr);
 	    }
 	}
 	
@@ -480,6 +504,80 @@ public class CodeGenerator extends VisitorAdaptor {
 	        Code.putJump(0);
 	        forContinueJumps.peek().add(Code.pc - 2);
 	    }
+	}
+
+/*----------------------------------------------------------------------------------------------------------------*/
+
+	// Switch statement
+
+	@Override
+	public void visit(CaseBegin caseBegin) {
+		SingleStatement_switch owner = findEnclosingSwitch(caseBegin);
+		if (owner != null && (switchOwners.isEmpty() || switchOwners.peek() != owner)) {
+			switchOwners.push(owner);
+			switchBreakJumps.push(new ArrayList<>());
+			switchPendingFalseJump.push(-1);
+			switchPendingFallthroughJump.push(-1);
+			breakTargets.push("switch");
+		}
+		
+		if (!switchPendingFalseJump.isEmpty()) {
+			int pendingFalse = switchPendingFalseJump.peek();
+			if (pendingFalse != -1) {
+				Code.fixup(pendingFalse);
+				switchPendingFalseJump.pop();
+				switchPendingFalseJump.push(-1);
+			}
+		}
+		
+		CaseClause caseClause = (CaseClause) caseBegin.getParent();
+		int caseValue = caseClause.getN2();
+		Code.put(Code.dup);
+		Code.loadConst(caseValue);
+		Code.putFalseJump(Code.eq, 0);
+		switchPendingFalseJump.pop();
+		switchPendingFalseJump.push(Code.pc - 2);
+		
+		if (!switchPendingFallthroughJump.isEmpty()) {
+			int pendingFall = switchPendingFallthroughJump.peek();
+			if (pendingFall != -1) {
+				Code.fixup(pendingFall);
+				switchPendingFallthroughJump.pop();
+				switchPendingFallthroughJump.push(-1);
+			}
+		}
+	}
+	
+	@Override
+	public void visit(CaseClause caseClause) {
+		if (!switchPendingFallthroughJump.isEmpty()) {
+			Code.putJump(0);
+			switchPendingFallthroughJump.pop();
+			switchPendingFallthroughJump.push(Code.pc - 2);
+		}
+	}
+	
+	@Override
+	public void visit(SingleStatement_switch singleStatement_switch) {
+		if (!switchOwners.isEmpty() && switchOwners.peek() == singleStatement_switch) {
+			int pendingFalse = switchPendingFalseJump.pop();
+			if (pendingFalse != -1) {
+				Code.fixup(pendingFalse);
+			}
+			int pendingFall = switchPendingFallthroughJump.pop();
+			if (pendingFall != -1) {
+				Code.fixup(pendingFall);
+			}
+			List<Integer> breaks = switchBreakJumps.pop();
+			for (Integer jumpAddr : breaks) {
+				Code.fixup(jumpAddr);
+			}
+			switchOwners.pop();
+			if (!breakTargets.isEmpty() && "switch".equals(breakTargets.peek())) {
+				breakTargets.pop();
+			}
+		}
+		Code.put(Code.pop);
 	}
 	
 /*----------------------------------------------------------------------------------------------------------------*/

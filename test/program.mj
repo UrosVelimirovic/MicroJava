@@ -10,17 +10,24 @@ int a, b[], c,d;
 	}
 	void main()
 	{
-		a = 3;
-		for(d = 0; d < 10; d++)
-		{
-			print(3);
-			for(c = 0; c < 1; c++)
-			{
-				break;
-				print(4);
-				
+		a = 0;
+		for(c = 0; c < 4; c++) {
+			switch(a){
+				case 1:
+					
+				case 0:
+				a++;
+				case 4:
+					print(a);
+					for(d = 3; d < 6; d++)
+					{
+						print(d);
+						break;
+					}
+					break;
+			
 			}
-			break; break;
+
 		}
 	}
 	
