@@ -60,8 +60,7 @@ public class Compiler {
 			prog.traverseBottomUp(sa);
 			
 			/* Ispis tabele simbola */
-			log.info("=====================================================================");
-			Tab.dump();
+			new Compiler().tsdump();
 			
 			if(!p.errorDetected && sa.passed()){
 				/* Generisanje koda */ 
@@ -84,6 +83,12 @@ public class Compiler {
 			if (br != null) try { br.close(); } catch (IOException e1) { log.error(e1.getMessage(), e1); }
 		}
 
+	}
+	
+	public void tsdump() {
+		Logger log = Logger.getLogger(Compiler.class);
+		log.info("=====================================================================");
+		Tab.dump();
 	}
 	
 	

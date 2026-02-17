@@ -72,11 +72,11 @@ public class SemAnalyzer extends VisitorAdaptor {
 	}
 
 	public void report_info(String message, SyntaxNode info) {
-//		StringBuilder msg = new StringBuilder(message); 
-//		int line = (info == null) ? 0: info.getLine();
-//		if (line != 0)
-//			msg.append (" na liniji ").append(line);
-//		log.info(msg.toString());
+		StringBuilder msg = new StringBuilder(message); 
+		int line = (info == null) ? 0: info.getLine();
+		if (line != 0)
+			msg.append (" na liniji ").append(line);
+		log.info(msg.toString());
 	}
 	
 	public boolean passed() {

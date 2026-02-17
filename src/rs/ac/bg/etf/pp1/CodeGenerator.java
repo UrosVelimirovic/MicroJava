@@ -580,6 +580,17 @@ public class CodeGenerator extends VisitorAdaptor {
 	@Override
 	public void visit(SingleStatement_continue singleStatement_continue) {
 	    // Continue to the next iteration of the innermost for loop
+	    int switchDepth = 0;
+	    SyntaxNode current = singleStatement_continue;
+	    while (current != null) {
+	    	if (current instanceof SingleStatement_switch) {
+	    		switchDepth++;
+	    	}
+	    	current = current.getParent();
+	    }
+	    for (int i = 0; i < switchDepth; i++) {
+	    	Code.put(Code.pop);
+	    }
 	    if (!forContinueJumps.isEmpty()) {
 	        Code.putJump(0);
 	        forContinueJumps.peek().add(Code.pc - 2);
